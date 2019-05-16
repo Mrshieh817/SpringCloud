@@ -3,6 +3,9 @@ package com.igxe;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 /**
  * @author 作者:大飞
@@ -20,7 +23,7 @@ public class EurekaApplication {
 
 	/* 登录验证需要spring.security */
 
-	/*@EnableWebSecurity
+	@EnableWebSecurity
 	public static class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		@Override
@@ -28,6 +31,6 @@ public class EurekaApplication {
 			http.csrf().disable().authorizeRequests().anyRequest().authenticated().and().httpBasic();
 		}
 
-	}*/
+	}
 
 }
