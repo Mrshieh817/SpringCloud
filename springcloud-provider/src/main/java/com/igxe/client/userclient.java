@@ -15,7 +15,11 @@ import com.igxe.model.Usermodel;
 */
 @FeignClient("product")
 public interface userclient {
-	
+
+	/**
+	 * 备注提示
+	 * @return
+	 */
   @GetMapping("product/test")
   Usermodel test();
 }
