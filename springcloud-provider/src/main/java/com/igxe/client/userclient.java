@@ -2,8 +2,11 @@ package com.igxe.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.igxe.model.Usermodel;
+
+import feign.Param;
 
 /**
 * @author 作者:大飞
@@ -22,4 +25,8 @@ public interface userclient {
 	 */
   @GetMapping("product/test")
   Usermodel test();
+  
+  //通过项目服务名来获取方法，即使该项目没得方法，但是只要服务名称【项目名称】 为provider的都能访问该方法
+  @GetMapping("product/client/getxcf")
+  Usermodel getxcf(@RequestParam("id")Integer id);
 }
