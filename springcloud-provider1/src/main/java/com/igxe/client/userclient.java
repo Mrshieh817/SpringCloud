@@ -2,8 +2,11 @@ package com.igxe.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.igxe.model.Usermodel;
+
+import feign.Param;
 
 /**
 * @author 作者:大飞
@@ -18,4 +21,8 @@ public interface userclient {
 	
   @GetMapping("product/test")
   Usermodel test();
+  
+	
+  @GetMapping("product/getxcf")
+  Usermodel getxcf(@RequestParam("id")Integer id);
 }

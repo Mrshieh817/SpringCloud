@@ -23,5 +23,13 @@ public class productController {
 		o.setAdress("重庆江北");
 		return o;
 	} 
+	
+	@GetMapping({"/getxcf"})
+	public Usermodel getxcf(Integer id) {
+		Usermodel o = new Usermodel();
+		o.setName("我是大飞吖-我是大飞吖-我是大飞吖-我是大飞吖-我是大飞吖-"+id+"");
+		o.setAdress("重庆九龙坡");
+		return o;
+	} 
 
 }

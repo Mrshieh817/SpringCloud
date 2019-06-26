@@ -35,4 +35,10 @@ public class UserController {
 		
 		return client.test();
 	} 
+	
+	@GetMapping({"/test2"})
+	public Usermodel test2(Integer id) {
+		
+		return client.getxcf(id);
+	} 
 }
