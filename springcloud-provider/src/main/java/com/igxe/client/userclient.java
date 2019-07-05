@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.igxe.model.Usermodel;
 
-import feign.Param;
 
 /**
 * @author 作者:大飞

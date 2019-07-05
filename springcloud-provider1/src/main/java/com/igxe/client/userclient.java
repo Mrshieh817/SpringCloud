@@ -22,7 +22,6 @@ public interface userclient {
   @GetMapping("product/test")
   Usermodel test();
   
-	
   @GetMapping("product/client/getxcf")
   Usermodel getxcf(@RequestParam("id")Integer id);
 }
