@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: rndealer-eureka-zuul #在注册中心显示的名字
+server:
+  port: 10086 #项目运行的端口
+
+eureka:
+  client:
+     service-url:
+      defaultZone: http://user:123456@localhost:8888/eureka/ #注册中心的地址
+#自定义路由方式    
+zuul:
+  routes:
+    pservice:
+      path: /p/**
+      serviceId: product
+ribbon:
+  eureka:
+    enabled: true #是否在ribbon中使用
+
+    
+    
