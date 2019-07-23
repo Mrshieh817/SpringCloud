@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.igxe.model.Usermodel;
+import com.igxe.tool.CookieUtil;
 
 /**
 * @author 作者:大飞
@@ -20,7 +21,7 @@ public class productController {
 	@GetMapping({"/test"})
 	public Usermodel test(HttpServletRequest request) {
 		Usermodel o = new Usermodel();
-		o.setName("我是大飞吖-product111111111"+request.getHeader("xcf"));
+		o.setName("我是大飞吖-product111111111,Header:"+request.getHeader("xcf")+"cookies:"+CookieUtil.getValue(request,"ffcoo"));
 		o.setAdress("重庆江北");
 		return o;
 	} 

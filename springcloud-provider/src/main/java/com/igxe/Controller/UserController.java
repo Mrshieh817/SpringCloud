@@ -1,7 +1,9 @@
 package com.igxe.Controller;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +26,9 @@ public class UserController {
 	
 	
 	@GetMapping({"/test"})
-	public Usermodel test(HttpServletRequest request) {
+	public Usermodel test(HttpServletRequest request,HttpServletResponse response) {
+		Cookie cookie=new Cookie("ffcoo", "cookeis啊啊啊啊");
+		response.addCookie(cookie);
 		Usermodel o = new Usermodel();
 		o.setName("我是大飞吖"+request.getHeader("xcf"));
 		o.setAdress("重庆江北");
