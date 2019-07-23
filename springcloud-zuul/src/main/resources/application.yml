@@ -8,7 +8,7 @@ eureka:
   client:
      service-url:
       defaultZone: http://user:123456@localhost:8888/eureka/ #注册中心的地址
-#自定义路由方式    
+#自定义路由方式    routes 下面的节点名称可以自定义，比如现在的pservice，你可以取名其他名称，path的地址，你可以自定义前缀，但是serviceId必须是你服务名的真是名称
 zuul:
   routes:
     pservice:
