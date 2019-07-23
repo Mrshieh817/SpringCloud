@@ -1,5 +1,7 @@
 package com.igxe.Controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,9 +18,9 @@ import com.igxe.model.Usermodel;
 @RequestMapping({ "product"})
 public class productController {
 	@GetMapping({"/test"})
-	public Usermodel test() {
+	public Usermodel test(HttpServletRequest request) {
 		Usermodel o = new Usermodel();
-		o.setName("我是大飞吖-product111111111");
+		o.setName("我是大飞吖-product111111111"+request.getHeader("xcf"));
 		o.setAdress("重庆江北");
 		return o;
 	} 
