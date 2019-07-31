@@ -15,8 +15,7 @@ import feign.RequestTemplate;
 
 /**
  * @author 作者:大飞
- * @version 创建时间：2019年7月23日 下午3:44:22 类说明
- * [FeignClient转发HttpServletRequest]
+ * @version 创建时间：2019年7月23日 下午3:44:22 类说明 [FeignClient转发HttpServletRequest]
  */
 
 @Configuration
@@ -37,15 +36,21 @@ public class FeignConfiguration implements RequestInterceptor {
 			}
 			logger.info("feign interceptor header:{}", template);
 		}
-		/*
-		 * Enumeration<String> bodyNames = request.getParameterNames();
-		 * StringBuffer body =new StringBuffer(); if (bodyNames != null) { while
-		 * (bodyNames.hasMoreElements()) { String name =
-		 * bodyNames.nextElement(); String values = request.getParameter(name);
-		 * body.append(name).append("=").append(values).append("&"); } }
-		 * if(body.length()!=0) { body.deleteCharAt(body.length()-1);
-		 * template.body(body.toString()); //logger.info(
-		 * "feign interceptor body:{}",body.toString()); }
-		 */
+
+		Enumeration<String> bodyNames = request.getParameterNames();
+		StringBuffer body = new StringBuffer();
+		if (bodyNames != null) {
+			while (bodyNames.hasMoreElements()) {
+				String name = bodyNames.nextElement();
+				String values = request.getParameter(name);
+				body.append(name).append("=").append(values).append("&");
+			}
+		}
+		if (body.length() != 0) {
+			body.deleteCharAt(body.length() - 1);
+			template.body(body.toString());
+			logger.info("feign interceptor body:{}", body.toString());
+		}
+
 	}
 }
