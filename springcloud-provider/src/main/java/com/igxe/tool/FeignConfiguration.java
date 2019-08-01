@@ -22,6 +22,7 @@ import feign.RequestTemplate;
 public class FeignConfiguration implements RequestInterceptor {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void apply(RequestTemplate template) {
 		ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
