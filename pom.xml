@@ -90,5 +90,6 @@
   	<module>springcloud-provider</module>
   	<module>springcloud-provider1</module>
     <module>springcloud-zuul</module>
+    <module>com.xcf.mybatis</module>
   </modules>
 </project>
