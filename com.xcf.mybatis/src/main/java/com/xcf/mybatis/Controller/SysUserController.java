@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.xcf.mybatis.Core.SysUser;
 import com.xcf.mybatis.Mapper.SysUserMapper;
@@ -44,5 +45,9 @@ public class SysUserController {
 			model.setId(id);
 		}
 		return sysuserService.Getuserlist(model);
+	}
+	@RequestMapping("getinfo")
+	public Object getinfo(@RequestParam(name="id",defaultValue="0") Integer id){
+		return sysuserService.getuserinfobyid(id);
 	}
 }

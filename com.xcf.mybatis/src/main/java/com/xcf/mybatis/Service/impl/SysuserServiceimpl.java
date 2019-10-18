@@ -33,4 +33,10 @@ public class SysuserServiceimpl implements SysuserService {
 		}		
 		return usermapper.selectByExample(ordersendexample);
 	}
+	
+	
+	@Override
+	public List<SysUser> getuserinfobyid(Integer id){
+		return usermapper.getuserinfobyid(id);
+	}
 }

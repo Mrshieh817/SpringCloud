@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xcf.mybatis.Mapper.SysUserMapper">
+ 
+ <select id="getuserinfobyid" resultType="com.xcf.mybatis.Core.SysUser">
+   select * from sys_user 
+   <if test=" id !=null and id != 0">
+     where id=#{id}
+   </if> 
+ </select>
 </mapper>

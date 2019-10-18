@@ -1,5 +1,9 @@
 package com.xcf.mybatis.Mapper;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.xcf.mybatis.Core.SysUser;
 
 import tk.mybatis.mapper.common.Mapper;
@@ -11,5 +15,10 @@ import tk.mybatis.mapper.common.Mapper;
 */
 
 public interface SysUserMapper extends Mapper<SysUser> {
-
+	/**
+	 * 根据id查询用户信息
+	 * @param id
+	 * @return
+	 */
+  List<SysUser> getuserinfobyid(@Param("id") Integer id);
 }
