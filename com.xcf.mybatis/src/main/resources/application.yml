@@ -9,6 +9,12 @@ spring:
     url: jdbc:mysql://192.168.139.128:3306/Movie?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
     username: root
     password: Root-123
+  redis:
+   host: 172.16.15.149
+   port: 6379
+   password: null
+   timeout: 300
+   database: 1
 #mybatis配置    
 mybatis:
   mapper-locations: classpath:mappers/*.xml
