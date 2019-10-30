@@ -10,7 +10,7 @@ import lombok.Data;
 * 类说明
 */
 @Data
-public class TeambasicModel {
+public class TeambasicModel extends BaseModel {	
 	/**
 	 * HLTV站点的团队id
 	 */
