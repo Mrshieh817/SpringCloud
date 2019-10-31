@@ -47,11 +47,11 @@ public class TeambasicModel extends BaseModel {
 	private BigDecimal totalMoney;
 	
 	/**
-	 * 最近匹配统计信息
+	 * 最近匹配统计信息(JSON)
 	 */
 	private String recentmatchesStatistics;
 	/**
-	 * 团队核心排名
+	 * 团队核心排名(JSON)
 	 */
 	private String rankingCore;
 

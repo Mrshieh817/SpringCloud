@@ -27,23 +27,23 @@ public class TeamMapsChild extends BaseModel {
 	 */
 	private String mapstypeName;
 	/**
-	 * 地域原始统计
+	 * 地域原始统计(JSON)
 	 */
 	
 	private String rawStats;
 	
 	/**
-	 * Side breakdown
+	 * Side breakdown(JSON)
 	 */	
 	private String sideBreakdown;
 	
 	/**
-	 * Game changers
+	 * Game changers(JSON)
 	 */
 	private String gameChangers;
 	
 	/**
-	 * Matches
+	 * Matches(JSON)
 	 */	
 	private String matches;
 	

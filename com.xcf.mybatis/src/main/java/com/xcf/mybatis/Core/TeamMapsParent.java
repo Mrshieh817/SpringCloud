@@ -18,15 +18,15 @@ public class TeamMapsParent extends BaseModel {
 	 */
 	private String teamName;
 	/**
-	 * 地图分析
+	 * 地图分析(JSON)
 	 */
 	private String mapBreakdown;
 	/**
-	 * 比较突出的地图
+	 * 比较突出的地图(JSON)
 	 */
 	private String mapHighlight;
 	/**
-	 * 地图概述
+	 * 地图概述(JSON)
 	 */
 	
 	private String mapOverview;

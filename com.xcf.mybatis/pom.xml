@@ -9,7 +9,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<groupId>SpringCloud-parent</groupId>
-	<artifactId>com.xcf.mybatis</artifactId>r
+	<artifactId>com.xcf.mybatis</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>com.xcf.mybatis</name>
 	<url>http://maven.apache.org</url>

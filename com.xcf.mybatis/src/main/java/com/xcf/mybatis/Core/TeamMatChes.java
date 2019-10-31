@@ -9,7 +9,7 @@ import lombok.Data;
 * 团队的比赛信息
 */
 @Data
-public class MatChes extends BaseModel {	
+public class TeamMatChes extends BaseModel {	
 	/**
 	 * HLTV站点的团队id
 	 */

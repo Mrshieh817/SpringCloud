@@ -23,8 +23,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.xcf.mybatis.Core.MatChes;
+import com.xcf.mybatis.Core.GamePlayers;
+import com.xcf.mybatis.Core.TeamMatChes;
 import com.xcf.mybatis.Core.Resultmodel;
 import com.xcf.mybatis.Core.TeamMapsChild;
 import com.xcf.mybatis.Core.TeamMapsParent;
@@ -45,6 +45,7 @@ public class TeamAndPlayers {
 	static Map<String, Object> gosugamersTeamMap = null;// 存储GOSUGAMERS团队信息
 	private static final String urlhltv = "https://www.hltv.org";
 	private static final String urlgosugamers = "https://www.gosugamers.net";
+	private static final String urlhltvplayer="https://www.hltv.org/stats/players";
 
 	/*
 	 * public static void main(String[] args) { try { getHltvTeanInfo(); } catch
@@ -53,7 +54,7 @@ public class TeamAndPlayers {
 	 * }
 	 */
 	
-	
+	/////////////////////////////////////////////////////////////团队信息//////////////////////////////////////////
 
 	/**
 	 * 查询HLTV站点的所有的团队基本信息
@@ -206,6 +207,7 @@ public class TeamAndPlayers {
 								System.out.println("第:"+jj+"条=数据增加信息:"+teamName+"\n");
 							}
 						}
+						//////////////////////开始存储///////////////////
 					}
 				}
 				redisutil.setString("addTeam",jsonObject.toJson(insert));
@@ -264,7 +266,7 @@ public class TeamAndPlayers {
 	//@Scheduled(cron="0 48 19 ? * *")
 	public void getHltvTeanMatchesInfo() throws IOException {			
 		redisutil.getconnection();
-		List<MatChes> insert=new ArrayList<MatChes>();
+		List<TeamMatChes> insert=new ArrayList<TeamMatChes>();
 		String errname="";
 		Gson jsonObject = new Gson();		
 		Resultmodel msg = null;
@@ -294,7 +296,7 @@ public class TeamAndPlayers {
 						if (msg.getCode()==200) {
 							Document doc1=Jsoup.parse(msg.getMessage());
 							Elements urlm1=doc1.getElementsByClass("stats-table no-sort");
-							MatChes model=null;
+							TeamMatChes model=null;
 							for (Element element3 : urlm1) {
 								Document doc2 = Jsoup.parse(element3.toString());
 								Elements urlm2 = doc2.select("tbody").select("tr");
@@ -314,7 +316,7 @@ public class TeamAndPlayers {
 										Result=element4.select("td").get(5).select("span").text();// 比分
 										WL=element4.select("td").get(6).text();// 输赢
 									}
-									model=new MatChes();
+									model=new TeamMatChes();
 									model.setTltvteamId(Integer.parseInt(tltvteamId));
 									model.setTeamName(teamName);
 									model.setDate(date);
@@ -327,6 +329,7 @@ public class TeamAndPlayers {
 								}							
 							}
 						}
+						////////////////开始存储//////////////////
 					}
 				}
 				redisutil.setString("addTeamMatChes",jsonObject.toJson(insert));				
@@ -374,8 +377,10 @@ public class TeamAndPlayers {
 						if (msg.getCode()==200) {
 							/////////////////////////////存储 Map breakdown 和 Map highlight///////////////
 							TeamMapsParent model=null;
-							Map<String, Object> mapBreakdownmap=null;
-							Map<String, Object> mapHighlightmap=null;
+							List<Map<String, Object>> mapBreakdownmaplist=new ArrayList<>();
+							Map<String, Object> mapBreakdownmap=new HashMap<>();
+							List<Map<String, Object>>mapHighlightmaplist=new ArrayList<>();
+							Map<String, Object> mapHighlightmap=new HashMap<>();		
 							Document doc1=Jsoup.parse(msg.getMessage());
 							Elements urlm1=doc1.getElementsByClass("narrow-columns");//存储 Map breakdown 和 Map highlight							
 							for (Element element3 : urlm1) {
@@ -383,32 +388,42 @@ public class TeamAndPlayers {
 								 mapHighlightmap=new HashMap<>();								
 								String breakdownname= element3.getElementsByClass("standard-box big-padding").select("span").text();//存储 Map breakdown
 								String breakdownvalue= element3.getElementsByClass("graph ").attr("data-fusionchart-config").toString();//存储 Map breakdown
-								mapBreakdownmap.put(breakdownname, breakdownvalue);	
-								mapBreakdown=jsonObject.toJson(mapBreakdownmap);
+								mapBreakdownmap.put("name", breakdownname);	
+								mapBreakdownmap.put("value", breakdownvalue);	
+								mapBreakdownmaplist.add(mapBreakdownmap);
+								mapBreakdown=jsonObject.toJson(mapBreakdownmaplist);
 								Elements highlightele=element3.getElementsByClass("standard-box big-padding map-pool").select("a");//存储  Map highlight
 								for (Element element4 : highlightele) {
+									mapHighlightmap=new HashMap<>();
 									String heighlightname= element4.select("img").attr("title").toString();
 									String heighlightvalue= element4.select("a").text();
-									mapHighlightmap.put(heighlightname, heighlightvalue);
+									mapHighlightmap.put("name", heighlightname);
+									mapHighlightmap.put("value", heighlightvalue);
+									mapHighlightmaplist.add(mapHighlightmap);
 								}
-								mapHighlight=jsonObject.toJson(mapHighlightmap);
+								mapHighlight=jsonObject.toJson(mapHighlightmaplist);
 							}
 							////////////////////////存储 Map overview////////////////////////////
 							Elements urlm2=doc1.getElementsByClass("two-grid");//存储 Map overview
 							Document doc2=Jsoup.parse(urlm2.toString());//获取two-grid的下面col的div
-							Elements urlm3=doc2.getElementsByClass("col");							
-							Map<String,Map<String, Object>> listmapOverviewmap=new HashMap<String,Map<String,Object>>();						
+							Elements urlm3=doc2.getElementsByClass("col");													
+							Map<String, Object> mapOverviewmap=new HashMap<>();
+							List<Map<String, Object>> maplist=new ArrayList<>();	
+							Map<String,Object> listmapOverviewmap=new HashMap<String,Object>();
+							List<Map<String, Object>> Totalmaplist=new ArrayList<>();
 							for (Element element3 : urlm3) {
-								Map<String, Object> mapOverviewmap=null;
-								mapOverviewmap=new HashMap<>();
+								 maplist=new ArrayList<>();
 								String viewname=element3.getElementsByClass("map-pool-map-holder").select("img").attr("title");							
 								Elements overviewele=element3.getElementsByClass("stats-rows standard-box");
 								Document doc3=Jsoup.parse(overviewele.toString());//获取two-grid的下面col的div
 								Elements urlm4=doc3.getElementsByClass("stats-row");
 								for (Element element4 : urlm4) {
+									mapOverviewmap=new HashMap<>();
 									String overviewname=element4.select("span").get(0).text().replaceAll("(\\s)","");
 									String overviewvalue=element4.select("span").get(1).text().replaceAll("(\\s)","");
-									mapOverviewmap.put(overviewname, overviewvalue);
+									mapOverviewmap.put("name", overviewname);
+									mapOverviewmap.put("value", overviewvalue);
+									maplist.add(mapOverviewmap);
 								}
 								Elements overviewele1=element3.getElementsByClass("two-grid win-defeat-container");
 								Document doc4=Jsoup.parse(overviewele1.toString());//获取biggest的下面col的div
@@ -416,16 +431,21 @@ public class TeamAndPlayers {
 								for (Element element5 : urlm5) {
 									//String img=element5.select("img").attr("src").toString();
 									if (element5.select("div").size()>2) {
+										mapOverviewmap=new HashMap<>();
 										String biggest=element5.select("div").get(2).child(0).text();
 										String vs=element5.select("div").get(2).child(1).text();
-										mapOverviewmap.put(biggest, vs);
+										mapOverviewmap.put("bigname", biggest);
+										mapOverviewmap.put("bigvalue", vs);
+										maplist.add(mapOverviewmap);
 									}	
 								}
-								if (viewname.length()>0) {
-									listmapOverviewmap.put(viewname,mapOverviewmap);
+								if (viewname.length()>0) {									
+									listmapOverviewmap=new HashMap<String,Object>();
+									listmapOverviewmap.put(viewname,maplist);
+									Totalmaplist.add(listmapOverviewmap);
 								}								
 							}
-							mapOverview=jsonObject.toJson(listmapOverviewmap);	
+							mapOverview=jsonObject.toJson(Totalmaplist);	
 							///////////////实体/////////////
 							model=new TeamMapsParent();
 							model.setTltvteamId(Integer.parseInt(tltvteamId));
@@ -433,10 +453,12 @@ public class TeamAndPlayers {
 							model.setMapBreakdown(mapBreakdown);
 							model.setMapHighlight(mapHighlight);
 							model.setMapOverview(mapOverview);
-							insert.add(model);
-							
+							insert.add(model);	
 						}
+						
+				        ////////开始存储////////////////
 					}
+					
 				}
 				redisutil.setString("addTeamParentMaps",jsonObject.toJson(insert));				
 			}
@@ -453,7 +475,7 @@ public class TeamAndPlayers {
 	 * 
 	 * @throws IOException
 	 */
-	@Scheduled(fixedRate = 1000 * 6)
+	//@Scheduled(fixedRate = 1000 * 6)
 	//@Scheduled(cron="0 48 19 ? * *")
 	public void getHltvTeanMapsExpansionInfo() throws IOException {			
 		redisutil.getconnection();
@@ -469,6 +491,7 @@ public class TeamAndPlayers {
 		String sideBreakdown="";
 		String gameChangers="";
 		String matches="";
+		int jj=0;
 		try {			
 			// 查询HLTV站点的所有的团队信息
 			String hltvurl = MessageFormat.format("{0}/stats/teams?minMapCount=0", urlhltv);
@@ -485,7 +508,7 @@ public class TeamAndPlayers {
 						 tltvteamId=getNumber(element2.select("a").attr("href").toString()).replace("/", "");// HLTV站点的团队id
 						msg = HttpsUtils.Get(MessageFormat.format("{0}/stats/teams/maps/{1}/{2}", urlhltv,tltvteamId,URLEncoder.encode(teamName,"utf-8")));//获取团队的比赛信息
 						if (msg.getCode()==200) {
-							/////////////////////////////根据团队地图的信息，或者额外扩展信息///////////////
+							/////////////////////////////根据团队地图的信息，获取额外扩展信息///////////////
 							Document doc1=Jsoup.parse(msg.getMessage());
 							Element urlm1=doc1.getElementsByClass("tabs standard-box").get(1);
 							Document doc2=Jsoup.parse(urlm1.toString());
@@ -496,9 +519,13 @@ public class TeamAndPlayers {
 								mapstypeName=element3.select("a").text();// 扩展地图的名称								
 								msg=HttpsUtils.Get(urlhltv+url);//获取扩展地图的连接拿取数据
 								if (msg.getCode()==200) {
+									List<Map<String, Object>> rawstatsmaplist=new ArrayList<>();
 									Map<String, Object> rawstatsmap=new HashMap<>();
+									List<Map<String, Object>> sitebreakdownmaplist=new ArrayList<>();
 									Map<String, Object> sitebreakdownmap=new HashMap<>();
+									List<Map<String, Object>> gamechangersdownmaplist=new ArrayList<>();
 									Map<String, Object> gamechangersdownmap=new HashMap<>();
+									TeamMapsChild model=null;
 									Document doc3=Jsoup.parse(msg.getMessage());
 									Elements urlm3=doc3.getElementsByClass("columns");//存储 raw stats 和 site breakdown
 									Document doc4=Jsoup.parse(urlm3.toString());//获取columns的下面col
@@ -507,70 +534,192 @@ public class TeamAndPlayers {
 										Elements rawstatsele=element4.getElementsByClass("stats-rows standard-box");
 										Document doc5=Jsoup.parse(rawstatsele.toString());//获取stats-rows standard-box的下面stats-row
 										Elements urlm5=doc5.getElementsByClass("stats-row");
-										for (Element element5 : urlm5) {											
+										for (Element element5 : urlm5) {	
+											rawstatsmap=new HashMap<>();
 											String raestatsname=element5.select("span").get(0).text().replaceAll("(\\s)","");
 											String raestatsvalue=element5.select("span").get(1).text().replaceAll("(\\s)","");
-											rawstatsmap.put(raestatsname, raestatsvalue);//存储rawstats
+											rawstatsmap.put("name", raestatsname);//存储rawstats
+											rawstatsmap.put("value", raestatsvalue);//存储rawstats
+											rawstatsmaplist.add(rawstatsmap);
 										}
-										rawStats=jsonObject.toJson(rawstatsmap);
+										rawStats=jsonObject.toJson(rawstatsmaplist);
+										/////////////////////////存储 Side breakdown////////////////////////
 										String sitebreakdownname= element4.getElementsByClass("standard-box big-padding").select("span").text();//存储 Side breakdown
 										String sitebreakdownvalue= element4.getElementsByClass("graph ").attr("data-fusionchart-config").toString();//存储 Side breakdown
 										if (sitebreakdownname.length()>0) {
-											sitebreakdownmap.put(sitebreakdownname, sitebreakdownvalue);
-											sideBreakdown=jsonObject.toJson(sitebreakdownmap);	
+											sitebreakdownmap=new HashMap<>();
+											sitebreakdownmap.put("name", sitebreakdownname);
+											sitebreakdownmap.put("value", sitebreakdownvalue);
+											sitebreakdownmaplist.add(sitebreakdownmap);
+											sideBreakdown=jsonObject.toJson(sitebreakdownmaplist);	
 										}																			
 									}
 									/////////////////////////Game changers////////////////////									
 									Elements gamechangerseles=doc3.getElementsByClass("col standard-box big-padding");
-									for (Element element4 : gamechangerseles) {										
+									for (Element element4 : gamechangerseles) {			
+										gamechangersdownmap=new HashMap<>();
 										String gamechangersname=element4.select("div").get(0).child(1).text();
 										String gamechangersvalue=element4.select("div").get(0).child(0).text();
-										gamechangersdownmap.put(gamechangersname, gamechangersvalue);
+										gamechangersdownmap.put("name", gamechangersname);
+										gamechangersdownmap.put("value", gamechangersvalue);
+										gamechangersdownmaplist.add(gamechangersdownmap);
 									}
-									gameChangers=jsonObject.toJson(gamechangersdownmap);
+									gameChangers=jsonObject.toJson(gamechangersdownmaplist);
 									////////////////////////Matches/////////////////////////
-									
+									List<Map<String, Object>> matchesmaplist=new ArrayList<>();
 									Elements matcheslels=doc3.getElementsByClass("stats-table");
 									for (Element element4 : matcheslels) {
-										Elements urlm5 = element4.select("tbody").select("tr");
+										Elements urlm5 = element4.select("tbody").select("tr");										
 										for (Element element5 : urlm5) {
+											Map<String, Object> matchesmap=new HashMap<>();
 											Map<String, Object> eventmap=new HashMap<>();
 											Map<String, Object> opponentmap=new HashMap<>();
 											// 判断是否存在比赛数据
-											if (element5.select("tbody").select("tr").size()>1) {									
-												String date=element5.select("td").get(0).select("a").text();//时间
-												eventmap.put("img", element5.select("td").get(1).select("img").attr("src"));//event 图片
-												eventmap.put("name", element5.select("td").get(1).select("a").text());	// event 名称
-												opponentmap.put("img", element5.select("td").get(3).select("img").attr("src"));// opponent 图片
-												opponentmap.put("name", element5.select("td").get(3).select("a").text());	//opponent 名称
-												//Event=jsonObject.toJson(eventmap);
-												//Opponent=jsonObject.toJson(opponentmap);
-												//Map=element5.select("td").get(4).select("span").text();// 地图
-												//Result=element5.select("td").get(5).select("span").text();// 比分
-												//WL=element5.select("td").get(6).text();// 输赢
+											if (element4.select("tbody").select("tr").size()>=1) {									
+												String date=element5.select("td").get(0).select("a").text();//时间												
+												opponentmap.put("img", element5.select("td").get(1).select("img").attr("src"));// opponent 图片
+												opponentmap.put("name", element5.select("td").get(1).select("a").text());	//opponent 名称
+												eventmap.put("img", element5.select("td").get(2).select("img").attr("src"));//event 图片
+												eventmap.put("name", element5.select("td").get(2).select("a").text());	// event 名称
+												String Result=element5.select("td").get(3).text().replaceAll("(\\s)", "");// 比分											
+												matchesmap.put("date", date);
+												matchesmap.put("opponent",opponentmap);
+												matchesmap.put("event",eventmap);
+												matchesmap.put("result",Result);
+												matchesmaplist.add(matchesmap);
 											}
 										}
 									}
-									
+									matches=jsonObject.toJson(matchesmaplist);
+									///////////////////////////开始存储//////////////////////////////
+									model=new TeamMapsChild();
+									model.setTltvteamId(Integer.parseInt(tltvteamId));
+									model.setTeamName(teamName);
+									model.setMapstypeId(Integer.parseInt(mapstypeId));
+									model.setMapstypeName(mapstypeName);
+									model.setRawStats(rawStats);
+									model.setSideBreakdown(sideBreakdown);
+									model.setGameChangers(gameChangers);
+									model.setMatches(matches);
+									insert.add(model);										
 								}
+								
 							}
 						}
+	                     //////////////////////开始存储///////////////////////
+						jj++;
+						if (jj==2) {
+							//redisutil.setString("addTeamMapsExpansion",jsonObject.toJson(insert));
+							String vv="";
+						}	
 					}
+					
 				}
-				redisutil.setString("addTeamMapsExpansion",jsonObject.toJson(insert));				
+							
 			}
 
 		} catch (Exception e) {
-			System.out.println("HLTV站点,获取比赛赛事异常：" + e.getMessage()+"===团队名称:"+errname);
+			System.out.println("HLTV站点,获取团队扩展信息异常：" + e.getMessage()+"===团队名称:"+errname);
 		}
 	}
 	
 	
 	
+	/////////////////////////////////////////////////玩家信息///////////////////////////////////////////////////////////////
+	
+
+	/**
+	 *抓取HLTV站点的玩家列表信息
+	 * 
+	 * @throws IOException
+	 */
+	//@Scheduled(fixedRate = 1000 * 6)
+	//@Scheduled(cron="0 48 19 ? * *")
+	public void getHltvGamePlayersInfo() throws IOException {	
+		redisutil.getconnection();
+		List<GamePlayers> insertlist=new ArrayList<>();
+		Gson jsonObject = new Gson();
+		String playerId="0";
+		String playerName="";
+		String country="";
+		String countryImg="";
+		String teamName="";
+		String maps="";
+		String killdeathDiff="";
+		String killdeathScale="";
+		String rating="";
+		Resultmodel msg = null;
+		int jj=0;
+		try {
+			msg=HttpsUtils.Get(MessageFormat.format("{0}", urlhltvplayer));
+			if (msg.getCode()==200) {
+				Document doc=Jsoup.parse(msg.getMessage());
+				Elements elements=doc.getElementsByClass("stats-table player-ratings-table").select("tbody").select("tr");
+				if (elements.size()>=1) {
+					Map<String, Object> teamMaps=new HashMap<>();
+					List<Map<String, Object>> listteamMaps=new ArrayList<>();
+					GamePlayers model=null;
+					for (Element element : elements) {		
+						 model=new GamePlayers();
+						 listteamMaps=new ArrayList<>();
+						 //国家图片
+						 countryImg=element.getElementsByClass("playerCol ").select("img").attr("src").toString();
+						 //国家名称
+						 country=element.getElementsByClass("playerCol ").select("img").attr("title").toString();
+						 //玩家ID
+						 playerId=getNumber(element.getElementsByClass("playerCol ").select("a").attr("href").toString()).replaceAll("(\\/)", "");
+						 // 玩家名称
+						 playerName=element.getElementsByClass("playerCol ").select("a").text();
+						 Elements team=element.getElementsByClass("teamCol").select("a");
+						 for (Element element2 : team) {
+							 teamMaps=new HashMap<>();
+							 teamMaps.put("teamid", getNumber(element2.select("img").attr("src").toString()).replaceAll("(\\/)", ""));
+							 teamMaps.put("teamname", element2.select("img").attr("title").toString());
+							 teamMaps.put("teamimg", element2.select("img").attr("src").toString());
+							 listteamMaps.add(teamMaps);
+						 }
+						 // 属于的团队
+						 teamName=jsonObject.toJson(listteamMaps);
+						 // maps
+						 maps=element.getElementsByClass("statsDetail").get(0).text();
+						 // 杀敌和死亡差异
+						 killdeathDiff=element.getElementsByClass("kdDiffCol won").text();
+						 //杀敌和死亡比例
+						 killdeathScale=element.getElementsByClass("statsDetail").get(1).text();
+						 // 评分
+						 rating=element.getElementsByClass("ratingCol").text();
+						 ////////////////////////////////开始存储///////////////////////////////
+						 jj++;
+						 model.setPlayerId(Integer.parseInt(playerId));
+						 model.setPlayerName(playerName);
+						 model.setCountry(country);
+						 model.setCountryImg(countryImg);
+						 model.setTeamName(teamName);
+						 model.setMaps(maps);
+						 model.setKilldeathDiff(killdeathDiff);
+						 model.setKilldeathScale(killdeathScale);
+						 model.setRating(rating);
+						 insertlist.add(model);
+						 if (jj==10) {
+							redisutil.setString("addTeamPlayers", jsonObject.toJson(insertlist));
+						}
+					}
+					
+				}
+			}
+			
+		} catch (Exception e) {
+			System.out.println("抓取玩家列表信息异常:"+e.getMessage());
+		}
+	}
 	
 	////////////////////////////////////////////////////////辅助/////////////////////////////////////////////////////////////
 
-	// 获取文字
+	/**
+	 * 获取一串字符里面的文字"(\\D)(\\w+.\\w+)(\\D)"
+	 * @param data
+	 * @return
+	 */
 	public static String getText(String data) {
 		String madata = "";
 		String pattern = "(\\D)(\\w+.\\w+)(\\D)"; // 精确匹配文字
@@ -584,10 +733,14 @@ public class TeamAndPlayers {
 		}
 		return madata.trim();
 	}
-	// 获取数字
+	/**
+	 * 获取/ /里面的数字"(\\/\\d+\\/)"
+	 * @param data
+	 * @return
+	 */
 	public static String getNumber(String data) {
 		String madata = "";
-		String pattern = "(\\/\\d+\\/)"; // 精确匹配文字
+		String pattern = "(\\/\\d+)"; // 精确匹配文字
 		Pattern r = Pattern.compile(pattern);
 		Matcher m = r.matcher(data);
 		if (m.find()) {
@@ -599,7 +752,7 @@ public class TeamAndPlayers {
 		return madata.trim();
 	}
 	/*
-	 * 获取括号内的信息
+	 * 获取括号内的信息"(?<=\\()[^\\)]+"
 	 */
 	public static String getDataFromkuohao(String data) {
 		String madata = "";
@@ -615,7 +768,11 @@ public class TeamAndPlayers {
 		return madata.trim();
 	}
 	
-	// 验证是否为数字
+	/**
+	 * 验证是否为数字
+	 * @param data
+	 * @return
+	 */
 	public static String checkNumber(String data) {
 		String madata = "";
 		String pattern = "(\\d+)"; // 精确匹配文字
