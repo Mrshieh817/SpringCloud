@@ -1,5 +1,7 @@
 package com.xcf.mybatis.Core;
 
+import java.util.Date;
+
 import lombok.Data;
 
 /**
@@ -8,12 +10,12 @@ import lombok.Data;
 * 类说明
 */
 @Data
-public class TeamMapsChild extends BaseModel {
+public class TeamMapschild extends BaseModel {
 
 	/**
 	 * HLTV站点的团队id
 	 */
-	private Integer tltvteamId;
+	private Integer teamId;
 	/**
 	 * 团队名称
 	 */
@@ -46,5 +48,14 @@ public class TeamMapsChild extends BaseModel {
 	 * Matches(JSON)
 	 */	
 	private String matches;
+	/**
+	 * 创建时间
+	 */
+	private Date createTime;
+	
+	/**
+	 * 修改时间
+	 */
+	private Date updateTime;
 	
 }

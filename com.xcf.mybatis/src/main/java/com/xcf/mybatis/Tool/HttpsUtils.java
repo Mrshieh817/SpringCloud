@@ -42,10 +42,10 @@ public class HttpsUtils {
 			CookieManager manager = new CookieManager();
 			CookieHandler.setDefault(manager);
 			conn.setRequestMethod("GET");
+			conn.setConnectTimeout(1000*30);
 			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 			conn.setUseCaches(false);// 设置不要缓存
-			conn.setRequestProperty("User-agent",
-					"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36");
+			conn.setRequestProperty("User-agent"," Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.90 Safari/537.36");
 			conn.setDoOutput(true);
 			conn.setDoInput(true);
 			StringBuffer sb = new StringBuffer();
@@ -60,6 +60,7 @@ public class HttpsUtils {
 			
 
 		} catch (Exception e) {
+			conn.disconnect();
 			msg.setCode(0);
 			msg.setMessage(e.getMessage());
 		}

@@ -1,6 +1,7 @@
 package com.xcf.mybatis.Core;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import lombok.Data;
 
@@ -10,11 +11,11 @@ import lombok.Data;
 * 类说明
 */
 @Data
-public class TeambasicModel extends BaseModel {	
+public class TeamBasic extends BaseModel {	
 	/**
 	 * HLTV站点的团队id
 	 */
-	private Integer tltvteamId;
+	private Integer teamId;
 	/**
 	 * 团队名称
 	 */
@@ -54,5 +55,14 @@ public class TeambasicModel extends BaseModel {
 	 * 团队核心排名(JSON)
 	 */
 	private String rankingCore;
+	/**
+	 * 创建时间
+	 */
+	private Date createTime;
+	
+	/**
+	 * 修改时间
+	 */
+	private Date updateTime;
 
 }
