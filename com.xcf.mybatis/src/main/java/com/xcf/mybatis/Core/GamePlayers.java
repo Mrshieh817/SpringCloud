@@ -1,5 +1,7 @@
 package com.xcf.mybatis.Core;
 
+import java.util.Date;
+
 import lombok.Data;
 
 /**
@@ -46,5 +48,14 @@ public class GamePlayers extends BaseModel {
 	 * 评分
 	 */
 	private String rating;
+	/**
+	 * 创建时间
+	 */
+	
+	private Date createTime;
+	/**
+	 * 修改时间
+	 */
+	private Date updateTime;
 
 }

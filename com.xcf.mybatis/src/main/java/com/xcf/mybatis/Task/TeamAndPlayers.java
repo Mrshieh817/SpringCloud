@@ -701,7 +701,7 @@ public class TeamAndPlayers {
 						 model.setRating(rating);
 						 insertlist.add(model);
 						 if (jj==10) {
-							redisutil.setString("addTeamPlayers", jsonObject.toJson(insertlist));
+							//redisutil.setString("addTeamPlayers", jsonObject.toJson(insertlist));
 						}
 					}
 					
@@ -709,10 +709,93 @@ public class TeamAndPlayers {
 			}
 			
 		} catch (Exception e) {
-			System.out.println("抓取玩家列表信息异常:"+e.getMessage());
+			System.out.println("玩家名称:"+playerName+"==抓取玩家列表信息异常:"+e.getMessage());
 		}
 	}
 	
+	
+	
+	/**
+	 * 获取玩家的基本信息
+	 */
+	@Scheduled(fixedRate = 1000 * 6)
+	//@Scheduled(cron="0 48 19 ? * *")
+	public void getHLTVGamerPlayersBasicInfo(){
+		redisutil.getconnection();
+		String playerId="0";
+		String nickname="";
+		String playerName="";
+		String playerIm="";
+		String teamId="0";
+		String teamName="";
+		String teamImg="";
+		String country="";
+		String countryImg="";
+		Resultmodel msg=null;
+		try {
+			//访问游戏玩家的列表，进而循环拿取基本信息
+			msg=HttpsUtils.Get(MessageFormat.format("{0}", urlhltvplayer));
+			if (msg.getCode()==200) {
+				Document doc=Jsoup.parse(msg.getMessage());
+				Elements elements=doc.getElementsByClass("stats-table player-ratings-table").select("tbody").select("tr");
+				if (elements.size()>=1) {
+					for (Element element : elements) {
+						//玩家ID
+						 playerId=getNumber(element.getElementsByClass("playerCol ").select("a").attr("href").toString()).replaceAll("(\\/)", "");
+						 // 玩家名称
+						 nickname=element.getElementsByClass("playerCol ").select("a").text();
+						 // 获取玩家身份基本信息及扩展信息
+						 msg=HttpsUtils.Get(MessageFormat.format("{0}/{1}/{2}", urlhltvplayer,playerId,nickname));
+						 if (msg.getCode()==200) {
+							Document doc1=Jsoup.parse(msg.getMessage());
+							// 循环菜单 （overview）==（Individual）==等等
+							Elements menuelements=doc1.getElementsByClass("tabs standard-box").select("a");
+							for (Element munuelement : menuelements) {
+						    	String menuurl=	munuelement.attr("href");
+						    	String menuname=munuelement.text();
+						    	if (menuname.toLowerCase().equals("overview")) {
+									msg=HttpsUtils.Get(urlhltv+menuurl);
+									if (msg.getCode()==200) {
+										Document overviewdoc=Jsoup.parse(msg.getMessage());
+										teamId=getNumber(overviewdoc.getElementsByClass("summaryBodyshotContainer").select("img").get(0).attr("src").toString()).replaceAll("(\\/)", "");
+										teamName=overviewdoc.getElementsByClass("summaryBodyshotContainer").select("img").get(0).attr("title").toString();
+										teamImg=overviewdoc.getElementsByClass("summaryBodyshotContainer").select("img").get(0).attr("src").toString();
+										playerIm=overviewdoc.getElementsByClass("summaryBodyshotContainer").select("img").get(1).attr("src").toString();
+										country=overviewdoc.getElementsByClass("summaryRealname text-ellipsis").select("img").attr("title").toString();
+										countryImg=overviewdoc.getElementsByClass("summaryRealname text-ellipsis").select("img").attr("src").toString();
+										playerName=overviewdoc.getElementsByClass("summaryRealname text-ellipsis").select("div .text-ellipsis").text();
+										String cc="";
+									}
+								}
+						    	if (menuname.toLowerCase().equals("matches")) {
+						    		System.out.println("menuname:"+menuname+"===menuurl:"+menuurl);
+								}
+						    	if (menuname.toLowerCase().equals("events")) {
+						    		System.out.println("menuname:"+menuname+"===menuurl:"+menuurl);
+								}
+						    	if (menuname.toLowerCase().equals("career")) {
+						    		System.out.println("menuname:"+menuname+"===menuurl:"+menuurl);
+								}
+						    	if (menuname.toLowerCase().equals("weapons")) {
+						    		System.out.println("menuname:"+menuname+"===menuurl:"+menuurl);
+								}
+						    	if (menuname.toLowerCase().equals("clutches")) {
+						    		System.out.println("menuname:"+menuname+"===menuurl:"+menuurl);
+								}
+						    	if (menuname.toLowerCase().equals("opponents")) {
+						    		System.out.println("menuname:"+menuname+"===menuurl:"+menuurl);
+								}
+							}
+						 }
+						 /////////////////////////////////可以开始存储信息，循环每个玩家/////////////////////////
+					}
+				}				
+			}
+			
+		} catch (Exception e) {
+			
+		}
+	}
 	////////////////////////////////////////////////////////辅助/////////////////////////////////////////////////////////////
 
 	/**
