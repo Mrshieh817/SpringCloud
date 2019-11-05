@@ -789,7 +789,7 @@ public class TeamAndPlayers {
 						 //国家名称
 						 country=element.getElementsByClass("playerCol ").select("img").attr("title").toString();
 						 //玩家ID
-						 playerId=getNumber(element.getElementsByClass("playerCol ").select("a").attr("href").toString()).replaceAll("(\\/)", "");
+						 playerId=getNumber1(element.getElementsByClass("playerCol ").select("a").attr("href").toString()).replaceAll("(\\/)", "");
 						 // 玩家名称
 						 playerName=element.getElementsByClass("playerCol ").select("a").text();
 						 Elements team=element.getElementsByClass("teamCol").select("a");
@@ -865,8 +865,9 @@ public class TeamAndPlayers {
 				Elements elements=doc.getElementsByClass("stats-table player-ratings-table").select("tbody").select("tr");
 				if (elements.size()>=1) {
 					for (Element element : elements) {
+						++jj;
 						//玩家ID
-						 playerId=getNumber(element.getElementsByClass("playerCol ").select("a").attr("href").toString()).replaceAll("(\\/)", "");
+						 playerId=getNumber1(element.getElementsByClass("playerCol ").select("a").attr("href").toString()).replaceAll("(\\/)", "");
 						 // 玩家名称
 						 nickname=element.getElementsByClass("playerCol ").select("a").text();
 						 Thread.sleep(1000*3);
@@ -879,9 +880,10 @@ public class TeamAndPlayers {
 							for (Element munuelement : menuelements) {
 						    	String menuurl=	munuelement.attr("href");
 						    	String menuname=munuelement.text();
-						    	++jj;
 						    	System.out.println(""+jj+"玩家名称:"+nickname+",请求:"+urlhltv+menuurl);
-						    	if (menuname.toLowerCase().equals("overview_test")) {
+						    	Thread.sleep(1000*3);
+						    	if (menuname.toLowerCase().equals("overview")) {
+						    		Thread.sleep(1000*3);
 						    		String playerName="";
 						    		String playerImg="";
 						    		String teamId="0";
@@ -1028,7 +1030,8 @@ public class TeamAndPlayers {
 										}
 									}
 								}
-						    	if (menuname.toLowerCase().equals("individual_test")) {
+						    	if (menuname.toLowerCase().equals("individual")) {
+						    		Thread.sleep(1000*3);
 									String overallstats="";
 									GamePlayersIndividual model=null;
 									Map<String, Object> overallstatsmap=new HashMap<>();
@@ -1134,7 +1137,8 @@ public class TeamAndPlayers {
 										}
 									}
 								}
-						    	if (menuname.toLowerCase().equals("matches_test")) {
+						    	if (menuname.toLowerCase().equals("matches")) {
+						    		Thread.sleep(1000*3);
 						    		String summary="";
 						    		String matchhistory="";
 						    		GamePlayersMatches model=null;
@@ -1202,7 +1206,8 @@ public class TeamAndPlayers {
 						    			
 									}
 								}
-						    	if (menuname.toLowerCase().equals("events_test")) {
+						    	if (menuname.toLowerCase().equals("events")) {
+						    		Thread.sleep(1000*3);
 						    		String eventhistory="";
 						    		GamePlayersEvent model=null;
 						    		Map<String, Object> eventhistorymap=new HashMap<>();
@@ -1253,7 +1258,8 @@ public class TeamAndPlayers {
 						    			
 									}
 								}
-						    	if (menuname.toLowerCase().equals("career_test")) {
+						    	if (menuname.toLowerCase().equals("career")) {
+						    		Thread.sleep(1000*3);
 						    		String careerrating="";
 						    		String careerform="";
 						    		GamePlayersCareer model=null;
@@ -1300,7 +1306,8 @@ public class TeamAndPlayers {
 						    			
 									}
 								}
-						    	if (menuname.toLowerCase().equals("weapons_test")) {
+						    	if (menuname.toLowerCase().equals("weapons")) {
+						    		Thread.sleep(1000*3);
 						    		String graph="";
 						    		String extendedweaponoverview="";
 						    		GamePlayersWeapons model=null;
@@ -1340,7 +1347,8 @@ public class TeamAndPlayers {
 						    			
 									}
 								}
-						    	if (menuname.toLowerCase().equals("clutches_test")) {
+						    	if (menuname.toLowerCase().equals("clutches")) {
+						    		Thread.sleep(1000*3);
 						    		String clutchesType="";
 						    		String summary="";
 						    		String clutcheshistory="";
@@ -1421,6 +1429,7 @@ public class TeamAndPlayers {
 						    		
 								}
 						    	if (menuname.toLowerCase().equals("opponents")) {
+						    		Thread.sleep(1000*3);
 						    		String opponentsType="";
 						    		String opponents="";
 						    		GamePlayersOpponents model=null;
@@ -1515,7 +1524,7 @@ public class TeamAndPlayers {
 		return madata.trim();
 	}
 	/**
-	 * 获取/ /里面的数字"(\\/\\d+\\)"
+	 * 获取/ 里面的数字"(\\/\\d+\\)"
 	 * @param data
 	 * @return
 	 */
