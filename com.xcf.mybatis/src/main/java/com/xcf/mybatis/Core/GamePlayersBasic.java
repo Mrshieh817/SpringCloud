@@ -32,19 +32,8 @@ public class GamePlayersBasic extends BaseModel {
 	/**
 	 * 年龄
 	 */
-	private Integer age;
-	/**
-	 * twitter地址
-	 */
-	private String twitter;
-	/**
-	 * twitch地址
-	 */
-	private String twitch;
-	/**
-	 * 成就(JSON)
-	 */
-	private String achiement;
+	private String age;
+	
 	/**
 	 * 现役团队ID
 	 */
@@ -72,7 +61,7 @@ public class GamePlayersBasic extends BaseModel {
 	/**
 	 * 每轮死亡
 	 */
-	private String drp;
+	private String dpr;
 	/**
 	 * 玩家杀死，助攻，幸存或被交易的回合百分比
 	 */
@@ -89,6 +78,20 @@ public class GamePlayersBasic extends BaseModel {
 	 * 每回合击杀数
 	 */
 	private String kpr;
+	
+	/**
+	 * twitter地址
+	 */
+	private String twitter;
+	/**
+	 * twitch地址
+	 */
+	private String twitch;
+	/**
+	 * 成就(JSON)
+	 */
+	private String achiement;
+	
 	/**
 	 * 统计（JSON）
 	 */
@@ -103,40 +106,6 @@ public class GamePlayersBasic extends BaseModel {
 	 */
 	private String forminfilter;
 	
-	/**
-	 * overview(JSON)
-	 */
-	private String overview;
-	
-	/**
-	 * matches(JSON)
-	 */
-	private String  matches;
-	
-	/**
-	 * events(JSON)
-	 */
-	private String events;
-	
-	/**
-	 * career(JSON)
-	 */
-	private String career;
-	
-	/**
-	 * weapons(JSON)
-	 */
-	private String weapons;
-	
-	/**
-	 * clutches(JSON)
-	 */
-	private String clutches;
-	
-	/**
-	 * opponents(JSON)
-	 */
-	private String opponents;
 	
 	/**
 	 * 创建时间

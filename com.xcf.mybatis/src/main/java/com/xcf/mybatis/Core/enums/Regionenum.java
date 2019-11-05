@@ -51,7 +51,7 @@ public enum Regionenum {
 	     */
 	    public static Integer getCode(String message){
 	    	for(Regionenum status: Regionenum.values()){
-				if(message==status.getMessage()){
+				if(status.name().equals(message.trim())){
 					return status.getCode();
 				}
 			}

@@ -7,7 +7,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     #url: jdbc:mysql://192.168.139.128:3306/Movie?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
-    url: jdbc:mysql://172.16.20.47:3306/zhuge?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+    url: jdbc:mysql://172.16.20.47:3306/zhuge?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
     username: igxecom
     password: igxecom2019
   redis:
@@ -24,7 +24,7 @@ mybatis:
     map-underscore-to-camel-case: true
     #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl   #这里打印的是mybatis返查询语句及返回数据
 #logging 打印查询sql语句
-logging:
-  level:
-   com.xcf.mybatis.Mapper: debug  # 改成你的mapper文件所在包路径
+#logging:
+ # level:
+  # com.xcf.mybatis.Mapper: debug  # 改成你的mapper文件所在包路径
     

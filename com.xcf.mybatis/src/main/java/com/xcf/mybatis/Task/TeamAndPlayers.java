@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -25,6 +23,14 @@ import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
 import com.xcf.mybatis.Core.GamePlayers;
+import com.xcf.mybatis.Core.GamePlayersBasic;
+import com.xcf.mybatis.Core.GamePlayersCareer;
+import com.xcf.mybatis.Core.GamePlayersClutches;
+import com.xcf.mybatis.Core.GamePlayersEvent;
+import com.xcf.mybatis.Core.GamePlayersIndividual;
+import com.xcf.mybatis.Core.GamePlayersMatches;
+import com.xcf.mybatis.Core.GamePlayersOpponents;
+import com.xcf.mybatis.Core.GamePlayersWeapons;
 import com.xcf.mybatis.Core.Matches;
 import com.xcf.mybatis.Core.TeamMatches;
 import com.xcf.mybatis.Core.Resultmodel;
@@ -32,6 +38,15 @@ import com.xcf.mybatis.Core.TeamMapschild;
 import com.xcf.mybatis.Core.TeamMapsparent;
 import com.xcf.mybatis.Core.TeamBasic;
 import com.xcf.mybatis.Core.enums.Regionenum;
+import com.xcf.mybatis.Service.GamePlayersBasicService;
+import com.xcf.mybatis.Service.GamePlayersCareerService;
+import com.xcf.mybatis.Service.GamePlayersClutchesService;
+import com.xcf.mybatis.Service.GamePlayersEventService;
+import com.xcf.mybatis.Service.GamePlayersIndividualService;
+import com.xcf.mybatis.Service.GamePlayersMatchesService;
+import com.xcf.mybatis.Service.GamePlayersOpponentsService;
+import com.xcf.mybatis.Service.GamePlayersService;
+import com.xcf.mybatis.Service.GamePlayersWeaponsService;
 import com.xcf.mybatis.Service.TeamMapschildService;
 import com.xcf.mybatis.Service.TeamMapsparentService;
 import com.xcf.mybatis.Service.TeamMatchesService;
@@ -59,6 +74,33 @@ public class TeamAndPlayers {
 	
 	@Autowired
 	private TeamMapschildService teamMapschildService;
+	
+	@Autowired
+	private GamePlayersService gamePlayersService;
+	@Autowired
+	private GamePlayersBasicService gamePlayersBasicService;
+	
+	@Autowired
+	private GamePlayersMatchesService gamePlayersMatchesService;
+	
+	@Autowired
+	private GamePlayersIndividualService gamePlayersIndividualService;
+	
+	@Autowired
+	private GamePlayersEventService gamePlayersEventService;
+	
+	@Autowired
+	private GamePlayersCareerService gamePlayersCareerService;
+	
+	@Autowired
+	private GamePlayersWeaponsService gamePlayersWeaponsService;
+	
+	@Autowired
+	private GamePlayersClutchesService gamePlayersClutchesService;
+	
+	@Autowired
+	private GamePlayersOpponentsService gamePlayersOpponentsService;
+	
 
 	static Map<String, Object> gosugamersTeamMap = null;// 存储GOSUGAMERS团队信息
 	private static final String urlhltv = "https://www.hltv.org";
@@ -356,7 +398,7 @@ public class TeamAndPlayers {
 									// 判断是否存在比赛数据
 									if (doc2.select("tbody").select("tr").size()>1) {									
 										date=element4.select("td").get(0).select("a").text();//时间
-										eventmap.put("img", element4.select("td").get(1).select("img").attr("src"));//event 图片
+										eventmap.put("img", urlhltv+element4.select("td").get(1).select("img").attr("src"));//event 图片
 										eventmap.put("name", element4.select("td").get(1).select("a").text());	// event 名称
 										opponentmap.put("img", element4.select("td").get(3).select("img").attr("src"));// opponent 图片
 										opponentmap.put("name", element4.select("td").get(3).select("a").text());	//opponent 名称
@@ -546,7 +588,7 @@ public class TeamAndPlayers {
 	 * 
 	 * @throws IOException
 	 */
-	@Scheduled(fixedRate = 1000 * 6)
+	//@Scheduled(fixedRate = 1000 * 6)
 	//@Scheduled(cron="0 48 19 ? * *")
 	public void getHltvTeanMapsExpansionInfo() throws IOException {			
 		redisutil.getconnection();
@@ -779,10 +821,18 @@ public class TeamAndPlayers {
 						 model.setKilldeathDiff(killdeathDiff);
 						 model.setKilldeathScale(killdeathScale);
 						 model.setRating(rating);
-						 insertlist.add(model);
-						 if (jj==10) {
-							//redisutil.setString("addTeamPlayers", jsonObject.toJson(insertlist));
-						}
+						 //insertlist.add(model);
+						// 验证存在不，不存在增加没存在修改
+						 GamePlayers bo= gamePlayersService.checkexist(model);
+							if (bo!=null) {
+								model.setId(bo.getId());
+								model.setUpdateTime(new Date());
+								int updatecount= gamePlayersService.save(model);
+							}else{		
+								model.setCreateTime(new Date());
+							  int addcount=	gamePlayersService.save(model);
+							  String vv="";
+							}
 					}
 					
 				}
@@ -798,20 +848,15 @@ public class TeamAndPlayers {
 	/**
 	 * 获取玩家的基本信息
 	 */
-	//@Scheduled(fixedRate = 1000 * 6)
+	@Scheduled(fixedRate = 1000 * 6)
 	//@Scheduled(cron="0 48 19 ? * *")
 	public void getHLTVGamerPlayersBasicInfo(){
 		redisutil.getconnection();
+		Gson jsonObject = new Gson();
 		String playerId="0";
 		String nickname="";
-		String playerName="";
-		String playerIm="";
-		String teamId="0";
-		String teamName="";
-		String teamImg="";
-		String country="";
-		String countryImg="";
 		Resultmodel msg=null;
+		int jj=0;
 		try {
 			//访问游戏玩家的列表，进而循环拿取基本信息
 			msg=HttpsUtils.Get(MessageFormat.format("{0}", urlhltvplayer));
@@ -824,6 +869,7 @@ public class TeamAndPlayers {
 						 playerId=getNumber(element.getElementsByClass("playerCol ").select("a").attr("href").toString()).replaceAll("(\\/)", "");
 						 // 玩家名称
 						 nickname=element.getElementsByClass("playerCol ").select("a").text();
+						 Thread.sleep(1000*3);
 						 // 获取玩家身份基本信息及扩展信息
 						 msg=HttpsUtils.Get(MessageFormat.format("{0}/{1}/{2}", urlhltvplayer,playerId,nickname));
 						 if (msg.getCode()==200) {
@@ -833,37 +879,609 @@ public class TeamAndPlayers {
 							for (Element munuelement : menuelements) {
 						    	String menuurl=	munuelement.attr("href");
 						    	String menuname=munuelement.text();
-						    	if (menuname.toLowerCase().equals("overview")) {
+						    	++jj;
+						    	System.out.println(""+jj+"玩家名称:"+nickname+",请求:"+urlhltv+menuurl);
+						    	if (menuname.toLowerCase().equals("overview_test")) {
+						    		String playerName="";
+						    		String playerImg="";
+						    		String teamId="0";
+						    		String teamName="";
+						    		String teamImg="";
+						    		String country="";
+						    		String countryImg="";
+						    		String age="0";
+						    		String rating20="";
+						    		String dpr="";
+						    		String kast="";
+						    		String impact="";
+						    		String adr="";
+						    		String kpr="";
+						    		String twitter="";
+						    		String twitch="";
+						    		String achiement="";
+						    		String statistics="";
+						    		String forminfilter="";
+						    		GamePlayersBasic model=null;
 									msg=HttpsUtils.Get(urlhltv+menuurl);
 									if (msg.getCode()==200) {
 										Document overviewdoc=Jsoup.parse(msg.getMessage());
-										teamId=getNumber(overviewdoc.getElementsByClass("summaryBodyshotContainer").select("img").get(0).attr("src").toString()).replaceAll("(\\/)", "");
-										teamName=overviewdoc.getElementsByClass("summaryBodyshotContainer").select("img").get(0).attr("title").toString();
-										teamImg=overviewdoc.getElementsByClass("summaryBodyshotContainer").select("img").get(0).attr("src").toString();
-										playerIm=overviewdoc.getElementsByClass("summaryBodyshotContainer").select("img").get(1).attr("src").toString();
+										if (overviewdoc.getElementsByClass("summaryBodyshotContainer").select("img").size()>1) {
+											teamId=getNumber(overviewdoc.getElementsByClass("summaryBodyshotContainer").select("img").get(0).attr("src").toString()).replaceAll("(\\/)", "");
+											teamName=overviewdoc.getElementsByClass("summaryBodyshotContainer").select("img").get(0).attr("title").toString();
+											teamImg=overviewdoc.getElementsByClass("summaryBodyshotContainer").select("img").get(0).attr("src").toString();
+											playerImg=overviewdoc.getElementsByClass("summaryBodyshotContainer").select("img").get(1).attr("src").toString();
+										}
+										// 判断是否有团队图片或者玩家照片
+										if (overviewdoc.getElementsByClass("summaryBodyshotContainer").select("img").size()==1) {
+											playerImg=overviewdoc.getElementsByClass("summaryBodyshotContainer").select("img").get(0).attr("src").toString();
+										}										
 										country=overviewdoc.getElementsByClass("summaryRealname text-ellipsis").select("img").attr("title").toString();
 										countryImg=overviewdoc.getElementsByClass("summaryRealname text-ellipsis").select("img").attr("src").toString();
 										playerName=overviewdoc.getElementsByClass("summaryRealname text-ellipsis").select("div .text-ellipsis").text();
-										String cc="";
+										age=overviewdoc.getElementsByClass("summaryPlayerAge").text().replaceAll("(\\D+)", "");
+										Elements startbreakeles=overviewdoc.getElementsByClass("summaryStatBreakdownRow");
+										for (Element startbreak : startbreakeles) {
+											for (Element startbreak1 : startbreak.getElementsByClass("summaryStatBreakdown")) {
+												String name=startbreak1.getElementsByClass("summaryStatBreakdownSubHeader").select(".summaryStatTooltip b").text().trim();
+												String value=startbreak1.getElementsByClass("summaryStatBreakdownData").select(".summaryStatBreakdownDataValue").text();
+												if (name.equals("Rating 2.0") || name.equals("Rating 1.0")) {
+													rating20=value;
+												}
+												if (name.equals("DPR")) {
+													dpr=value;
+												}
+												if (name.equals("KAST")) {
+													kast=value;
+												}
+												if (name.equals("Impact")) {
+													impact=value;
+												}
+												if (name.equals("ADR")) {
+													adr=value;
+												}
+												if (name.equals("KPR")) {
+													kpr=value;
+												}												
+											}
+										}
+										///////////////////////拿取推特和成就//////////////////////////////////
+										msg=HttpsUtils.Get(MessageFormat.format("{0}/player/{1}/{2}", urlhltv,playerId,nickname));
+										Map<String, Object> achiementmap=new HashMap<>();
+										List<Map<String, Object>> achiementmaplist=new ArrayList<>();
+										if (msg.getCode()==200) {
+											Document twitterdoc=Jsoup.parse(msg.getMessage());
+											if (twitterdoc.getElementsByClass("playerSocial").select("a").size()>1) {
+												twitter=twitterdoc.getElementsByClass("playerSocial").select("a").get(0).attr("href");
+												twitch=twitterdoc.getElementsByClass("playerSocial").select("a").get(1).attr("href");
+											}
+											if (twitterdoc.getElementsByClass("playerSocial").select("a").size()==1) {
+												twitter=twitterdoc.getElementsByClass("playerSocial").select("a").attr("href");
+											}
+											Elements trophyrow=twitterdoc.getElementsByClass("trophyRow").select("a");
+											for (Element trophyrow1 : trophyrow) {
+											 achiementmap=new HashMap<>();
+											 String img=trophyrow1.getElementsByClass("trophyDescription").select("img").attr("src").toString();
+											 String title=trophyrow1.getElementsByClass("trophyDescription").attr("title").toString();
+											 if (!img.startsWith("https://")) {
+												 img=urlhltv+img;
+											 }
+											 achiementmap.put("img", img);
+											 achiementmap.put("title", title);
+											 achiementmaplist.add(achiementmap);
+											}
+											achiement=jsonObject.toJson(achiementmaplist);
+										}
+										//////////////////statistics/////////////////
+										Map<String, Object> statisticsmap=new HashMap<>();
+										List<Map<String, Object>> statisticsmaplist=new ArrayList<>();
+										Elements statisticsele=overviewdoc.getElementsByClass("statistics").select(".columns");
+										for (Element statistics1 : statisticsele) {											
+											Elements statistics2= statistics1.getElementsByClass("col stats-rows standard-box").select(".stats-row");
+											for (Element statistics3 : statistics2) {
+												statisticsmap=new HashMap<>();
+												String name=statistics3.select("span").get(0).text();
+												String value=statistics3.select("span").get(1).text();
+												statisticsmap.put("name", name);
+												statisticsmap.put("value", value);
+												statisticsmaplist.add(statisticsmap);
+											}
+										}
+										statistics=jsonObject.toJson(statisticsmaplist);
+										///////////////////////////////Form in filter//////////////////////
+										Map<String, Object> forminfiltermap=new HashMap<>();
+										String forminfiltermapname=overviewdoc.getElementsByClass("big-padding").select(".diagram-info").text();
+										String forminfiltermapvalue=overviewdoc.getElementsByClass("big-padding").select(".graph").attr("data-fusionchart-config").toString();
+										forminfiltermap.put("name", forminfiltermapname);
+										forminfiltermap.put("value", forminfiltermapvalue);
+										forminfilter=jsonObject.toJson(forminfiltermap);
+										model=new GamePlayersBasic();
+										model.setPlayerId(Integer.parseInt(playerId));
+										model.setNickname(nickname);
+										model.setPlayerName(playerName);
+										model.setPlayerImg(playerImg);
+										model.setAge(age);
+										model.setTeamId(Integer.parseInt(teamId));
+										model.setTeamName(teamName);
+										model.setTeamImg(teamImg);
+										model.setCountry(country);
+										model.setCountryImg(countryImg);
+										model.setRating20(rating20);
+										model.setDpr(dpr);
+										model.setKast(kast);
+										model.setImpact(impact);
+										model.setAdr(adr);
+										model.setKpr(kpr);									   
+										model.setTwitter(twitter);
+										model.setTwitch(twitch);
+										model.setAchiement(achiement);
+										model.setStatistics(statistics);
+										model.setForminfilter(forminfilter);
+										// 验证存在不，不存在增加没存在修改
+										GamePlayersBasic bo= gamePlayersBasicService.checkexist(model);
+										if (bo!=null) {
+											model.setId(bo.getId());
+											model.setUpdateTime(new Date());
+											int updatecount= gamePlayersBasicService.save(model);
+										}else{		
+											model.setCreateTime(new Date());
+										    int addcount=	gamePlayersBasicService.save(model);
+										}
 									}
 								}
-						    	if (menuname.toLowerCase().equals("matches")) {
-						    		System.out.println("menuname:"+menuname+"===menuurl:"+menuurl);
+						    	if (menuname.toLowerCase().equals("individual_test")) {
+									String overallstats="";
+									GamePlayersIndividual model=null;
+									Map<String, Object> overallstatsmap=new HashMap<>();
+									List<Map<String, Object>> overallstatsmaplist=new ArrayList<>();
+									String roundstats="";
+									Map<String, Object> roundstatsmap=new HashMap<>();
+									List<Map<String, Object>> roundstatsmaplist=new ArrayList<>();
+									String openingstats="";
+									Map<String, Object> openingstatsmap=new HashMap<>();
+									List<Map<String, Object>> openingstatsmaplist=new ArrayList<>();
+									String weaponstats="";
+									Map<String, Object> weaponstatsmap=new HashMap<>();
+									List<Map<String, Object>> weaponstatsmaplist=new ArrayList<>();
+									msg=HttpsUtils.Get(urlhltv+menuurl);
+									if (msg.getCode()==200) {
+										Document individualdoc=Jsoup.parse(msg.getMessage());
+										Elements individualeles=individualdoc.getElementsByClass("statistics").select(".columns .col .standard-box");
+										int ii=0;										
+										for (Element individualeles1 : individualeles) {											
+											String indimenuname=individualeles1.parent().getElementsByClass("standard-headline").get(ii).text();
+											++ii;
+											if (indimenuname.equals("Overall stats")) {
+												Elements elements2=individualeles1.getElementsByClass("standard-box").select(".stats-row");
+												for (Element element2 : elements2) {
+													String name="";
+													String value="";
+													overallstatsmap=new HashMap<>();
+													if (element2.select("span").size()>1) {
+														name=element2.select("span").get(0).text();
+														value=element2.select("span").get(1).text();
+													}
+													if (element2.select("span").size()>2) {
+														name=element2.select("span").get(0).text();
+														value=element2.select("span").get(2).text();
+													}		
+													overallstatsmap.put("name", name);
+													overallstatsmap.put("value", value);
+													overallstatsmaplist.add(overallstatsmap);
+												}
+												overallstats=jsonObject.toJson(overallstatsmaplist);
+											}
+											if (indimenuname.equals("Opening stats")) {
+												Elements elements2=individualeles1.getElementsByClass("standard-box").select(".stats-row");
+												for (Element element2 : elements2) {													
+													String name="";
+													String value="";
+													openingstatsmap=new HashMap<>();
+													name=element2.select("span").get(0).text();
+													value=element2.select("span").get(1).text();
+													openingstatsmap.put("name", name);
+													openingstatsmap.put("value", value);
+													openingstatsmaplist.add(openingstatsmap);
+												}
+												ii=0;
+												openingstats=jsonObject.toJson(openingstatsmaplist);
+											}
+											if (indimenuname.equals("Round stats")) {
+												Elements elements2=individualeles1.getElementsByClass("standard-box").select(".stats-row");
+												for (Element element2 : elements2) {
+													String name="";
+													String value="";
+													roundstatsmap=new HashMap<>();
+													name=element2.select("span").get(0).text();
+													value=element2.select("span").get(1).text();
+													roundstatsmap.put("name", name);
+													roundstatsmap.put("value", value);
+													roundstatsmaplist.add(roundstatsmap);
+												}
+												roundstats=jsonObject.toJson(roundstatsmaplist);
+											}
+											if (indimenuname.equals("Weapon stats")) {
+												Elements elements2=individualeles1.getElementsByClass("standard-box").select(".stats-row");
+												for (Element element2 : elements2) {
+													String name="";
+													String value="";
+													weaponstatsmap=new HashMap<>();
+													name=element2.select("span").get(0).text();
+													value=element2.select("span").get(1).text();	
+													weaponstatsmap.put("name", name);
+													weaponstatsmap.put("value", value);
+													weaponstatsmaplist.add(weaponstatsmap);
+												}
+												ii=0;
+												weaponstats=jsonObject.toJson(weaponstatsmaplist);
+											}
+										}
+										model=new GamePlayersIndividual();
+										model.setPlayerId(Integer.parseInt(playerId));
+										model.setNickname(nickname);
+										model.setOverallstats(overallstats);
+										model.setOpeningstats(openingstats);
+										model.setRoundstats(roundstats);
+										model.setWeaponstats(weaponstats);
+										// 验证存在不，不存在增加没存在修改
+										GamePlayersIndividual bo= gamePlayersIndividualService.checkexist(model);
+										if (bo!=null) {
+											model.setId(bo.getId());
+											model.setUpdateTime(new Date());
+											int updatecount= gamePlayersIndividualService.save(model);
+										}else{		
+											model.setCreateTime(new Date());
+										    int addcount=	gamePlayersIndividualService.save(model);
+										}
+									}
 								}
-						    	if (menuname.toLowerCase().equals("events")) {
-						    		System.out.println("menuname:"+menuname+"===menuurl:"+menuurl);
+						    	if (menuname.toLowerCase().equals("matches_test")) {
+						    		String summary="";
+						    		String matchhistory="";
+						    		GamePlayersMatches model=null;
+						    		Map<String, Object> summarymap=new HashMap<>();
+						    		List<Map<String, Object>> summarymaplist=new ArrayList<>();
+						    		Map<String, Object> matelesmap=new HashMap<>();
+						    		List<Map<String, Object>> matelesmaplist=new ArrayList<>();
+						    		msg=HttpsUtils.Get(urlhltv+menuurl);
+						    		if (msg.getCode()==200) {
+						    			 Document matcheswdoc=Jsoup.parse(msg.getMessage());
+						    			 Elements matcheseles=matcheswdoc.getElementsByClass("summary").select(".col");
+						    			 for (Element matcheseles1 : matcheseles) {
+						    				 if (matcheseles1.getElementsByClass("summary-box standard-box").size()>0) {
+						    					 summarymap=new HashMap<>();
+						    					 String name=matcheseles1.getElementsByClass("summary-box standard-box").select(".description").text();
+						    					 String value=matcheseles1.getElementsByClass("summary-box standard-box").select(".value").text();
+						    					 summarymap.put("name", name);
+						    					 summarymap.put("value", value);
+						    					 summarymaplist.add(summarymap);
+											}						    				 
+										}
+						    		    summary=jsonObject.toJson(summarymaplist);
+						    		   ////////////////////////获取列表信息///////////////////
+						    			 Elements mareles=matcheswdoc.getElementsByClass("stats-table no-sort").select("tbody tr");
+						    			 for (Element mareles1 : mareles) {
+											if (mareles.size()>1) {
+												matelesmap=new HashMap<>();
+												String date=mareles1.select("td").get(0).select(".time").text();
+												String teamimg=mareles1.select("td").get(1).select(".flag").attr("src").toString();
+												String teamname=mareles1.select("td").get(1).text();
+												String opponentimg=mareles1.select("td").get(2).select(".flag").attr("src").toString();
+												String opponentname=mareles1.select("td").get(2).text();
+												String maps=mareles1.select("td").select(".statsMapPlayed").text();
+												String killanddie=mareles1.select("td").select(".statsCenterText").text();
+												String wonOrlose=mareles1.select("td").get(5).text().equals("")?"0":mareles1.select("td").get(5).text();
+												String rating=mareles1.select("td").get(6).text();
+												matelesmap.put("date", date);
+												matelesmap.put("teamimg", teamimg);
+												matelesmap.put("teamname", teamname);
+												matelesmap.put("opponentimg", opponentimg);
+												matelesmap.put("opponentname", opponentname);
+												matelesmap.put("maps", maps);
+												matelesmap.put("killanddie", killanddie);
+												matelesmap.put("wonOrlose", wonOrlose);
+												matelesmap.put("rating", rating);
+												matelesmaplist.add(matelesmap);
+											}
+										}
+						    			matchhistory=jsonObject.toJson(matelesmaplist);
+						    			model=new  GamePlayersMatches();
+						    			model.setPlayerId(Integer.parseInt(playerId));
+						    			model.setNickname(nickname);
+						    			model.setSummary(summary);
+						    			model.setMatchhistory(matchhistory);
+						    			// 验证存在不，不存在增加没存在修改
+						    			GamePlayersMatches bo= gamePlayersMatchesService.checkexist(model);
+										if (bo!=null) {
+											model.setId(bo.getId());
+											model.setUpdateTime(new Date());
+											int updatecount= gamePlayersMatchesService.save(model);
+										}else{		
+											model.setCreateTime(new Date());
+										    int addcount=	gamePlayersMatchesService.save(model);
+										}						    			
+						    			
+									}
 								}
-						    	if (menuname.toLowerCase().equals("career")) {
-						    		System.out.println("menuname:"+menuname+"===menuurl:"+menuurl);
+						    	if (menuname.toLowerCase().equals("events_test")) {
+						    		String eventhistory="";
+						    		GamePlayersEvent model=null;
+						    		Map<String, Object> eventhistorymap=new HashMap<>();
+						    		List<Map<String, Object>> eventhistorymaplist=new ArrayList<>();
+						    		msg=HttpsUtils.Get(urlhltv+menuurl);
+						    		if (msg.getCode()==200) {
+						    			Document eventsdoc=Jsoup.parse(msg.getMessage());
+						    			Elements eventseles=eventsdoc.getElementsByClass("stats-table").select("tbody tr");
+						    			for (Element eventseles1 : eventseles) {
+											if (eventseles.size()>1) {
+												eventhistorymap=new HashMap<>();
+												String date=eventseles1.select("td").get(0).text();
+												String eventsimg=eventseles1.select("td").get(1).select("img").attr("src").toString();
+												String eventsname=eventseles1.select("td").get(1).text();
+												String teamimg=eventseles1.select("td").get(3).select(".flag").attr("src").toString();
+												String teamname=eventseles1.select("td").get(3).text();
+												String maps=eventseles1.select("td").select(".statsMapPlayed").text();
+												String killanddie=eventseles1.select("td").select(".statsDetail").text();
+												String wonOrlose=eventseles1.select("td").get(6).text().equals("")?"0":eventseles1.select("td").get(6).text();
+												String rating=eventseles1.select("td").get(7).text();
+												eventhistorymap.put("date", date);
+												eventhistorymap.put("eventsimg", eventsimg);
+												eventhistorymap.put("eventsname", eventsname);
+												eventhistorymap.put("teamimg", teamimg);
+												eventhistorymap.put("teamname", teamname);
+												eventhistorymap.put("maps", maps);
+												eventhistorymap.put("killanddie", killanddie);
+												eventhistorymap.put("wonOrlose", wonOrlose);
+												eventhistorymap.put("rating", rating);
+												eventhistorymaplist.add(eventhistorymap);
+											}
+										}
+						    			eventhistory=jsonObject.toJson(eventhistorymaplist);
+						    			model=new GamePlayersEvent();
+						    			model.setPlayerId(Integer.parseInt(playerId));
+						    			model.setNickname(nickname);
+						    			model.setEventhistory(eventhistory);
+						    			// 验证存在不，不存在增加没存在修改
+						    			GamePlayersEvent bo= gamePlayersEventService.checkexist(model);
+										if (bo!=null) {
+											model.setId(bo.getId());
+											model.setUpdateTime(new Date());
+											int updatecount= gamePlayersEventService.save(model);
+										}else{		
+											model.setCreateTime(new Date());
+										    int addcount=	gamePlayersEventService.save(model);
+										}
+						    			
+									}
 								}
-						    	if (menuname.toLowerCase().equals("weapons")) {
-						    		System.out.println("menuname:"+menuname+"===menuurl:"+menuurl);
+						    	if (menuname.toLowerCase().equals("career_test")) {
+						    		String careerrating="";
+						    		String careerform="";
+						    		GamePlayersCareer model=null;
+						    		Map<String, Object> careerratingmap=new HashMap<>();
+						    		List<Map<String, Object>> careerratingmaplist=new ArrayList<>();
+						    		msg=HttpsUtils.Get(urlhltv+menuurl);
+						    		if (msg.getCode()==200) {
+						    			Document careerdoc=Jsoup.parse(msg.getMessage());
+						    			Elements careereles=careerdoc.getElementsByClass("stats-table").select("tbody tr");
+						    			for (Element eventseles1 : careereles) {
+											if (careereles.size()>1) {
+												careerratingmap=new HashMap<>();
+												String period=eventseles1.select("td").get(0).text();
+												String all=eventseles1.select("td").get(1).text();
+												String online=eventseles1.select("td").get(2).text();
+												String lan=eventseles1.select("td").get(3).text();
+												String majors=eventseles1.select("td").get(4).text();
+												careerratingmap.put("period", period);
+												careerratingmap.put("all", all);
+												careerratingmap.put("online", online);
+												careerratingmap.put("lan", lan);
+												careerratingmap.put("majors", majors);
+												careerratingmaplist.add(careerratingmap);
+											}
+										}
+						    			careerrating=jsonObject.toJson(careerratingmaplist);
+						    			//////////////////////////获取form//////////////////////
+						    			careerform=careerdoc.getElementsByClass("big-padding").select(".graph").attr("data-fusionchart-config").toString();
+						    			model=new GamePlayersCareer();
+						    			model.setPlayerId(Integer.parseInt(playerId));
+						    			model.setNickname(nickname);
+						    			model.setCareerrating(careerrating);
+						    			model.setCareerform(careerform);
+						    			// 验证存在不，不存在增加没存在修改
+						    			GamePlayersCareer bo=gamePlayersCareerService.checkexist(model);
+										if (bo!=null) {
+											model.setId(bo.getId());
+											model.setUpdateTime(new Date());
+											int updatecount=gamePlayersCareerService.save(model);
+										}else{		
+											model.setCreateTime(new Date());
+										    int addcount=gamePlayersCareerService.save(model);
+										}
+						    			
+									}
 								}
-						    	if (menuname.toLowerCase().equals("clutches")) {
-						    		System.out.println("menuname:"+menuname+"===menuurl:"+menuurl);
+						    	if (menuname.toLowerCase().equals("weapons_test")) {
+						    		String graph="";
+						    		String extendedweaponoverview="";
+						    		GamePlayersWeapons model=null;
+						    		Map<String, Object> extendedweaponoverviewmap=new HashMap<>();
+						    		List<Map<String, Object>> extendedweaponoverviewmaplist=new ArrayList<>();
+						    		msg=HttpsUtils.Get(urlhltv+menuurl);
+						    		if (msg.getCode()==200) {
+						    			Document weaponsdoc=Jsoup.parse(msg.getMessage());
+						    			graph=weaponsdoc.getElementsByClass("big-padding").select(".graph").attr("data-fusionchart-config").toString();
+						    			Elements weaponseles=weaponsdoc.getElementsByClass("columns").select(".standard-box .stats-row");
+						    			for (Element weaponseles1 : weaponseles) {
+						    				extendedweaponoverviewmap=new HashMap<>();
+						    			    String count=weaponseles1.getElementsByTag("span").get(0).text();
+						    			    String name=weaponseles1.getElementsByTag("span").get(1).text();
+						    			    String value=weaponseles1.getElementsByTag("span").get(2).text();
+						    			    extendedweaponoverviewmap.put("count", count);
+						    			    extendedweaponoverviewmap.put("name", name);
+						    			    extendedweaponoverviewmap.put("value", value);
+						    			    extendedweaponoverviewmaplist.add(extendedweaponoverviewmap);
+										}
+						    			extendedweaponoverview=jsonObject.toJson(extendedweaponoverviewmaplist);
+						    			model=new GamePlayersWeapons();
+						    			model.setPlayerId(Integer.parseInt(playerId));
+						    			model.setNickname(nickname);
+						    			model.setGraph(graph);
+						    			model.setExtendedweaponoverview(extendedweaponoverview);
+						    			// 验证存在不，不存在增加没存在修改
+						    			GamePlayersWeapons bo=gamePlayersWeaponsService.checkexist(model);
+										if (bo!=null) {
+											model.setId(bo.getId());
+											model.setUpdateTime(new Date());
+											int updatecount=gamePlayersWeaponsService.save(model);
+										}else{		
+											model.setCreateTime(new Date());
+										    int addcount=gamePlayersWeaponsService.save(model);
+										}
+						    			
+									}
+								}
+						    	if (menuname.toLowerCase().equals("clutches_test")) {
+						    		String clutchesType="";
+						    		String summary="";
+						    		String clutcheshistory="";
+						    		GamePlayersClutches model=null;
+						    		Map<String, Object> summarymap=new HashMap<>();
+						    		List<Map<String, Object>> summarymaplist=new ArrayList<>();
+						    		Map<String, Object> clutcheshistorymap=new HashMap<>();
+						    		List<Map<String, Object>> clutcheshistorymaplist=new ArrayList<>();
+						    		msg=HttpsUtils.Get(urlhltv+menuurl);
+						    		if (msg.getCode()==200) {
+										Document clutchesdoc=Jsoup.parse(msg.getMessage());
+										Elements clutcheseles=clutchesdoc.getElementsByClass("tabs standard-box").get(1).select(".stats-top-menu-item");
+										for (Element clutcheseles1 : clutcheseles) {
+										  	String url=clutcheseles1.select("a").attr("href").toString();
+										  	clutchesType=clutcheseles1.select("a").text().replaceAll("(\\s)", "");
+										  	summarymaplist=new ArrayList<>();
+										  	clutcheshistorymaplist=new ArrayList<>();
+										  	msg=HttpsUtils.Get(urlhltv+url);
+										  	if (msg.getCode()==200) {
+										  		Document clutcheshisdoc=Jsoup.parse(msg.getMessage());
+										  		//////////////////////////////获取summary//////////////////////////
+										  		Elements summeryeles=clutcheshisdoc.getElementsByClass("summary").select(".col .summary-box");
+										  		for (Element summeryeles1 : summeryeles) {
+										  			summarymap=new HashMap<>();
+										  			String name=summeryeles1.getElementsByClass("description").text();
+										  			String value=summeryeles1.getElementsByClass("value").text();
+										  			summarymap.put("name", name);
+										  			summarymap.put("value", value);
+										  			summarymaplist.add(summarymap);
+												}
+										  		summary=jsonObject.toJson(summarymaplist);	
+										  		/////////////////////////表单/////////////////////////
+										  		Elements clutcheshiseles=clutcheshisdoc.getElementsByClass("stats-table").select("tbody tr");
+										  		for (Element clutcheshiseles1 : clutcheshiseles) {
+													if (clutcheshiseles.size()>1) {
+														clutcheshistorymap=new HashMap<>();
+														String date=clutcheshiseles1.select("td").get(0).text();
+														String teamimg1=clutcheshiseles1.select("td").get(1).select("img").attr("src").toString();
+														String teamname1=clutcheshiseles1.select("td").get(1).text();
+														String teamimg2=clutcheshiseles1.select("td").get(3).select("img").attr("src").toString();
+														String teanname2=clutcheshiseles1.select("td").get(3).text();
+														String maps=clutcheshiseles1.select("td").get(5).select(".statsMapPlayed .dynamic-map-name-full").text();
+														String status=clutcheshiseles1.select("td").get(6).text();
+														String round=clutcheshiseles1.select("td").get(7).text().equals("")?"0":clutcheshiseles1.select("td").get(7).text();
+														clutcheshistorymap.put("date", date);
+														clutcheshistorymap.put("teamimg1", teamimg1);
+														clutcheshistorymap.put("teamname1", teamname1);
+														clutcheshistorymap.put("teamimg2", teamimg2);
+														clutcheshistorymap.put("teanname2", teanname2);
+														clutcheshistorymap.put("maps", maps);
+														clutcheshistorymap.put("status", status);
+														clutcheshistorymap.put("round", round);
+														clutcheshistorymaplist.add(clutcheshistorymap);
+													}
+												}
+										  		clutcheshistory=jsonObject.toJson(clutcheshistorymaplist);
+										  		model=new GamePlayersClutches();
+										  		model.setPlayerId(Integer.parseInt(playerId));
+								    			model.setNickname(nickname);
+								    			model.setClutchesType(clutchesType);
+								    			model.setSummary(summary);
+								    			model.setClutcheshistory(clutcheshistory);
+								    			// 验证存在不，不存在增加没存在修改
+								    			GamePlayersClutches bo=gamePlayersClutchesService.checkexist(model);
+												if (bo!=null) {
+													model.setId(bo.getId());
+													model.setUpdateTime(new Date());
+													int updatecount=gamePlayersClutchesService.save(model);
+												}else{		
+													model.setCreateTime(new Date());
+												    int addcount=gamePlayersClutchesService.save(model);
+												}
+								    			
+											}
+											
+										}
+									}
+						    		
 								}
 						    	if (menuname.toLowerCase().equals("opponents")) {
-						    		System.out.println("menuname:"+menuname+"===menuurl:"+menuurl);
+						    		String opponentsType="";
+						    		String opponents="";
+						    		GamePlayersOpponents model=null;
+						    		Map<String, Object> opponentsmap=new HashMap<>();
+						    		List<Map<String, Object>> opponentsmaplist=new ArrayList<>();
+						    		msg=HttpsUtils.Get(urlhltv+menuurl);
+						    		if (msg.getCode()==200) {
+										Document opponentsdoc=Jsoup.parse(msg.getMessage());
+										Elements opponentseles=opponentsdoc.getElementsByClass("tabs standard-box").get(1).select(".stats-top-menu-item");
+										for (Element opponentseles1 : opponentseles) {
+											String url=opponentseles1.select("a").attr("href").toString();
+											opponentsType=opponentseles1.select("a").text().replaceAll("(\\s)", "");
+											opponentsmaplist=new ArrayList<>();
+										  	msg=HttpsUtils.Get(urlhltv+url);
+										  	if (msg.getCode()==200) {
+										  		Document opponentshisdoc=Jsoup.parse(msg.getMessage());
+												Elements opponentshis=opponentshisdoc.select(".stats-table").select("tbody tr");
+												for (Element opponentshis1 : opponentshis) {
+													if (opponentshis.size()>1) {
+														opponentsmap=new HashMap<>();
+														if (opponentsType.equals("Team")) {
+															String teamimg=opponentshis1.select("td").get(0).select("img").attr("src").toString();
+															String teamname=opponentshis1.select("td").get(0).text();
+															opponentsmap.put("teamimg", teamimg);
+															opponentsmap.put("teamname", teamname);
+														}
+														if (opponentsType.equals("Lineup")) {
+															String opponentlineup=opponentshis1.select("td").get(0).text();
+															opponentsmap.put("opponentlineup", opponentlineup);
+														}
+														String maps=opponentshis1.select("td").get(1).text();
+														String killdeathdiff=opponentshis1.select("td").get(2).text();
+														String killdeath=opponentshis1.select("td").get(3).text();
+														String rating=opponentshis1.select("td").get(4).text();
+														opponentsmap.put("maps", maps);
+														opponentsmap.put("killdeathdiff", killdeathdiff);
+														opponentsmap.put("killdeath", killdeath);
+														opponentsmap.put("rating", rating);
+														opponentsmaplist.add(opponentsmap);
+													}
+												}
+												opponents=jsonObject.toJson(opponentsmaplist);
+												model=new GamePlayersOpponents();
+										  		model.setPlayerId(Integer.parseInt(playerId));
+								    			model.setNickname(nickname);
+								    			model.setOpponentsType(opponentsType);
+								    			model.setOpponents(opponents);
+								    			// 验证存在不，不存在增加没存在修改
+								    			GamePlayersOpponents bo=gamePlayersOpponentsService.checkexist(model);
+												if (bo!=null) {
+													model.setId(bo.getId());
+													model.setUpdateTime(new Date());
+													int updatecount=gamePlayersOpponentsService.save(model);
+												}else{		
+													model.setCreateTime(new Date());
+												    int addcount=gamePlayersOpponentsService.save(model);
+												}
+								    			
+											}
+										}
+									}
 								}
 							}
 						 }
