@@ -352,7 +352,7 @@ public class TeamAndPlayers {
 	 * 
 	 * @throws IOException
 	 */
-	//@Scheduled(fixedRate = 1000 * 6)
+	@Scheduled(fixedRate = 1000 * 6)
 	//@Scheduled(cron="0 48 19 ? * *")
 	public void getHltvTeanMatchesInfo() throws IOException {			
 		redisutil.getconnection();
@@ -382,7 +382,9 @@ public class TeamAndPlayers {
 						 teamName = element2.select("a").text();// HLTV站点的团队名称
 						 errname=teamName;
 						 teamId=getNumber(element2.select("a").attr("href").toString()).replace("/", "");// HLTV站点的团队id
+						 Thread.sleep(1000*3);
 						msg = HttpsUtils.Get(MessageFormat.format("{0}/stats/teams/matches/{1}/{2}", urlhltv,teamId,URLEncoder.encode(teamName,"utf-8")));//获取团队的比赛信息
+						System.out.println(MessageFormat.format("{0}/stats/teams/matches/{1}/{2}", urlhltv,teamId,URLEncoder.encode(teamName,"utf-8")));
 						if (msg.getCode()==200) {
 							Document doc1=Jsoup.parse(msg.getMessage());
 							Elements urlm1=doc1.getElementsByClass("stats-table no-sort");
@@ -449,7 +451,7 @@ public class TeamAndPlayers {
 	 * 
 	 * @throws IOException
 	 */
-	//@Scheduled(fixedRate = 1000 * 6)
+	@Scheduled(fixedRate = 1000 * 8)
 	//@Scheduled(cron="0 48 19 ? * *")
 	public void getHltvTeanParentsMapsInfo() throws IOException {			
 		redisutil.getconnection();
@@ -476,7 +478,9 @@ public class TeamAndPlayers {
 						 teamName = element2.select("a").text();// HLTV站点的团队名称
 						 errname=teamName;
 						 teamId=getNumber(element2.select("a").attr("href").toString()).replace("/", "");// HLTV站点的团队id
+						 Thread.sleep(1000*3);
 						msg = HttpsUtils.Get(MessageFormat.format("{0}/stats/teams/maps/{1}/{2}", urlhltv,teamId,URLEncoder.encode(teamName,"utf-8")));//获取团队的比赛信息
+						System.out.println(MessageFormat.format("{0}/stats/teams/maps/{1}/{2}", urlhltv,teamId,URLEncoder.encode(teamName,"utf-8")));
 						if (msg.getCode()==200) {
 							/////////////////////////////存储 Map breakdown 和 Map highlight///////////////
 							TeamMapsparent model=null;
@@ -588,7 +592,7 @@ public class TeamAndPlayers {
 	 * 
 	 * @throws IOException
 	 */
-	//@Scheduled(fixedRate = 1000 * 6)
+	@Scheduled(fixedRate = 1000 * 10)
 	//@Scheduled(cron="0 48 19 ? * *")
 	public void getHltvTeanMapsExpansionInfo() throws IOException {			
 		redisutil.getconnection();
@@ -619,6 +623,7 @@ public class TeamAndPlayers {
 						 teamName = element2.select("a").text();// HLTV站点的团队名称
 						 errname=teamName;
 						 teamId=getNumber(element2.select("a").attr("href").toString()).replace("/", "");// HLTV站点的团队id
+						 Thread.sleep(1000*3);
 						msg = HttpsUtils.Get(MessageFormat.format("{0}/stats/teams/maps/{1}/{2}", urlhltv,teamId,URLEncoder.encode(teamName,"utf-8")));//获取团队的比赛信息
 						if (msg.getCode()==200) {
 							/////////////////////////////根据团队地图的信息，获取额外扩展信息///////////////
@@ -631,6 +636,7 @@ public class TeamAndPlayers {
 								mapstypeId=getNumber1(url).replaceAll("(\\/)", "");//扩展地图的id
 								mapstypeName=element3.select("a").text();// 扩展地图的名称								
 								msg=HttpsUtils.Get(urlhltv+url);//获取扩展地图的连接拿取数据
+								System.out.println(urlhltv+url);
 								if (msg.getCode()==200) {
 									List<Map<String, Object>> rawstatsmaplist=new ArrayList<>();
 									Map<String, Object> rawstatsmap=new HashMap<>();
@@ -848,7 +854,7 @@ public class TeamAndPlayers {
 	/**
 	 * 获取玩家的基本信息
 	 */
-	@Scheduled(fixedRate = 1000 * 6)
+	//@Scheduled(fixedRate = 1000 * 6)
 	//@Scheduled(cron="0 48 19 ? * *")
 	public void getHLTVGamerPlayersBasicInfo(){
 		redisutil.getconnection();
@@ -881,7 +887,6 @@ public class TeamAndPlayers {
 						    	String menuurl=	munuelement.attr("href");
 						    	String menuname=munuelement.text();
 						    	System.out.println(""+jj+"玩家名称:"+nickname+",请求:"+urlhltv+menuurl);
-						    	Thread.sleep(1000*3);
 						    	if (menuname.toLowerCase().equals("overview")) {
 						    		Thread.sleep(1000*3);
 						    		String playerName="";
