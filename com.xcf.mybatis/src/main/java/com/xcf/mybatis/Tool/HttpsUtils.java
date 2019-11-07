@@ -42,7 +42,7 @@ public class HttpsUtils {
 			CookieManager manager = new CookieManager();
 			CookieHandler.setDefault(manager);
 			conn.setRequestMethod("GET");
-			conn.setConnectTimeout(1000*30);
+			conn.setConnectTimeout(1000*40);
 			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 			conn.setUseCaches(false);// 设置不要缓存
 			conn.setRequestProperty("User-agent"," Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.90 Safari/537.36");

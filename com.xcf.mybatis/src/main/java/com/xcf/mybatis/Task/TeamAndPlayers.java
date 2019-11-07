@@ -60,8 +60,8 @@ import com.xcf.mybatis.Tool.redis.RedisUtil;
  */
 @Component
 public class TeamAndPlayers {
-	@Autowired
-	private RedisUtil redisutil;
+	/*@Autowired
+	private RedisUtil redisutil;*/
 	
 	@Autowired
 	private TeambasicService teambasicService;
@@ -124,7 +124,7 @@ public class TeamAndPlayers {
 	//@Scheduled(fixedRate = 1000 * 6)
 	//@Scheduled(cron="0 48 19 ? * *")
 	public void getHltvBasicTeanInfo() throws IOException {			
-		redisutil.getconnection();
+		//redisutil.getconnection();
 		List<TeamBasic> insert=new ArrayList<TeamBasic>();
 		int jj = 0;
 		String errname="";
@@ -146,27 +146,29 @@ public class TeamAndPlayers {
 					for (Element element2 : urlm) {
 						String teamName = element2.select("a").text();// HLTV站点的团队名称
 						errname=teamName;
-						String teamId=getNumber(element2.select("a").attr("href").toString()).replace("/", "");// HLTV站点的团队id
+						String teamId=getNumber1(element2.select("a").attr("href").toString()).replace("/", "");// HLTV站点的团队id
 						String nationimgUrl=element2.select("img").attr("src").toString();//HLTV国旗
 						String nation=element2.select("img").attr("title").toString();//国家	
 						String rankingCore="";//团队核心排名
 						String region="";//区域
 						if (gosugamersTeamMap != null) {
 							jj++;
-							if (gosugamersTeamMap.get(teamName)!=null) {
-								//System.out.println("数量:" + jj + "==teamnName:" + teamName + "==teamnrating:"+ gosugamersTeamMap.get(keyString));// 正式发布的时候删除
+							TeamBasic teambasicmodel=null;
+							String rating="0";
+							String teamimgUrl="";
+							String totalMoney="0";
+							List<Map<String, Object>> recentlist=new ArrayList<Map<String,Object>>();
+							if (gosugamersTeamMap.get(teamName)!=null) {								
 								msg = HttpsUtils.Get("https://www.gosugamers.net/counterstrike/rankings/list?opponentName="+URLEncoder.encode(teamName,"utf-8")+"" );// 获取GOSUGAMERS 团队的世界排名及东部排名，占比信息
 								if (msg.getCode() == 200) {
-									TeamBasic teambasicmodel=null;
 									Document doc1 = Jsoup.parse(msg.getMessage());
 									if (doc1.getElementsByClass("rank-info").select("div").size()>4) {
 										 region=doc1.getElementsByClass("rank-info").select("div").get(4).select("div").get(1).textNodes().get(0).toString().replace("&amp;", "&").replace("&", "").replace(" ", "").toLowerCase();//区域
 									}									
-									String rating=gosugamersTeamMap.get(teamName).toString();//团队的能力值
-									String teamimgUrl=getDataFromkuohao(doc1.getElementsByClass("team-profile").select("a").get(0).attr("style").toString()).replace("'", "");//团队logo
-									String totalMoney=checkNumber(doc1.getElementsByClass("rank-earnings").select("span").text().replace("$", "").replace(",", "")); //累计金额
+									 rating=gosugamersTeamMap.get(teamName).toString();//团队的能力值
+									 teamimgUrl=getDataFromkuohao(doc1.getElementsByClass("team-profile").select("a").get(0).attr("style").toString()).replace("'", "");//团队logo
+									 totalMoney=checkNumber(doc1.getElementsByClass("rank-earnings").select("span").text().replace("$", "").replace(",", "")); //累计金额
 									Elements recent=doc1.getElementsByClass("ranking-table").select("tbody").select("tr");
-									List<Map<String, Object>> recentlist=null;
 									recentlist=new ArrayList<Map<String,Object>>();
 									Map<String, Object> recentmap=null;
 									for (Element element3 : recent) {
@@ -181,53 +183,10 @@ public class TeamAndPlayers {
 										recentmap.put("All Time", tecentloss);	
 										recentlist.add(recentmap);
 									}
-									// 获取团队核心排名
-									msg = HttpsUtils.Get("https://www.hltv.org/team/"+teamId+"/"+teamName.replace(" ", "-")+"");// 获取HLTV站点的团队核心排名
-									if (msg.getCode()==200) {
-										Document doc2 = Jsoup.parse(msg.getMessage());
-										Elements rankingCoreele=doc2.getElementsByClass("chart-container core-chart-container ");
-										for (Element element3 : rankingCoreele) {
-											Document doc3 = Jsoup.parse(element3.toString());
-										    Elements rankingCoreeles=doc3.getElementsByClass("graph");
-										    if (rankingCoreeles!=null) {
-										       rankingCore=rankingCoreeles.attr("data-fusionchart-config");
-											}
-										}
-									}
-									// 写数据到数据库
-									teambasicmodel=new TeamBasic();
-									teambasicmodel.setTeamId(Integer.parseInt(teamId));
-									teambasicmodel.setTeamName(teamName);
-									teambasicmodel.setRating(Integer.parseInt(rating));
-									teambasicmodel.setNation(nation);
-									teambasicmodel.setNationimgUrl(nationimgUrl);
-									teambasicmodel.setTeamimgUrl(teamimgUrl);
-									teambasicmodel.setRegion(Regionenum.getCode(region));
-									teambasicmodel.setTotalMoney(new BigDecimal(totalMoney));
-									teambasicmodel.setRecentmatchesStatistics(jsonObject.toJson(recentlist));
-									teambasicmodel.setRankingCore(rankingCore);
-									teambasicmodel.setCreateTime(new Date());
-									//insert.add(teambasicmodel);
-									// 验证存在不，不存在增加没存在修改
-									TeamBasic bo= teambasicService.checkexsit(teambasicmodel);
-									if (bo!=null) {
-										teambasicmodel.setId(bo.getId());
-										teambasicService.save(teambasicmodel);
-									}else{									
-										teambasicService.save(teambasicmodel);
-									}
-									System.out.println("第:"+jj+"条=数据增加信息:"+teamName+"\n");
-									
 								}								
 								
-							}else{
-								TeamBasic teambasicmodel=null;
+							}else{							
 								//设置团队基本排名信息为空的处理
-								String rating="0";
-								String teamimgUrl="";
-								String totalMoney="0";
-								String rankingCore1="";
-								List<Map<String, Object>> recentlist=null;
 								recentlist=new ArrayList<Map<String,Object>>();
 								Map<String, Object> recentmap=null;
 								int ii=0;
@@ -247,43 +206,45 @@ public class TeamAndPlayers {
 									recentmap.put("All Time", tecentloss);	
 									recentlist.add(recentmap);
 								}
-								// 获取团队核心排名
-								msg = HttpsUtils.Get("https://www.hltv.org/team/"+teamId+"/"+teamName.replace(" ", "-")+"");// 获取HLTV站点的团队核心排名
-								if (msg.getCode()==200) {
-									Document doc2 = Jsoup.parse(msg.getMessage());
-									Elements rankingCoreele=doc2.getElementsByClass("chart-container core-chart-container ");
-									for (Element element3 : rankingCoreele) {
-										Document doc3 = Jsoup.parse(element3.toString());
-									    Elements rankingCoreeles=doc3.getElementsByClass("graph");
-									    if (rankingCoreeles!=null) {
-									      rankingCore1=rankingCoreeles.attr("data-fusionchart-config");
-										}
+							}
+							// 获取团队核心排名
+							msg = HttpsUtils.Get("https://www.hltv.org/team/"+teamId+"/"+teamName.replace(" ", "-")+"");// 获取HLTV站点的团队核心排名
+							if (msg.getCode()==200) {
+								Document doc2 = Jsoup.parse(msg.getMessage());
+								Elements rankingCoreele=doc2.getElementsByClass("chart-container core-chart-container ");
+								for (Element element3 : rankingCoreele) {
+									Document doc3 = Jsoup.parse(element3.toString());
+								    Elements rankingCoreeles=doc3.getElementsByClass("graph");
+								    if (rankingCoreeles!=null) {
+								       rankingCore=rankingCoreeles.attr("data-fusionchart-config");
 									}
 								}
-								// 写数据到数据库
-								teambasicmodel=new TeamBasic();
-								teambasicmodel.setTeamId(Integer.parseInt(teamId));
-								teambasicmodel.setTeamName(teamName);
-								teambasicmodel.setRating(Integer.parseInt(rating));
-								teambasicmodel.setNation(nation);
-								teambasicmodel.setNationimgUrl(nationimgUrl);
-								teambasicmodel.setTeamimgUrl(teamimgUrl);
-								teambasicmodel.setRegion(Regionenum.getCode(region));
-								teambasicmodel.setTotalMoney(new BigDecimal(totalMoney));
-								teambasicmodel.setRecentmatchesStatistics(jsonObject.toJson(recentlist));
-								teambasicmodel.setRankingCore(rankingCore1);
-								teambasicmodel.setCreateTime(new Date());
-								//insert.add(teambasicmodel);
-								// 验证存在不，不存在增加没存在修改
-								TeamBasic bo= teambasicService.checkexsit(teambasicmodel);
-								if (bo!=null) {
-									teambasicmodel.setId(bo.getId());
-									teambasicService.save(teambasicmodel);
-								}else{									
-									teambasicService.save(teambasicmodel);
-								}
-								System.out.println("第:"+jj+"条=数据增加信息:"+teamName+"\n");
 							}
+							// 写数据到数据库
+							teambasicmodel=new TeamBasic();
+							teambasicmodel.setTeamId(Integer.parseInt(teamId));
+							teambasicmodel.setTeamName(teamName);
+							teambasicmodel.setRating(Integer.parseInt(rating));
+							teambasicmodel.setNation(nation);
+							teambasicmodel.setNationimgUrl(nationimgUrl);
+							teambasicmodel.setTeamimgUrl(teamimgUrl);
+							teambasicmodel.setRegion(Regionenum.getCode(region));
+							teambasicmodel.setTotalMoney(new BigDecimal(totalMoney));
+							teambasicmodel.setRecentmatchesStatistics(jsonObject.toJson(recentlist));
+							teambasicmodel.setRankingCore(rankingCore);									
+							//insert.add(teambasicmodel);
+							// 验证存在不，不存在增加没存在修改
+							int count=0;
+							TeamBasic bo= teambasicService.checkexsit(teambasicmodel);
+							if (bo!=null) {
+								teambasicmodel.setId(bo.getId());
+								teambasicmodel.setUpdateTime(new Date());
+								count=teambasicService.save(teambasicmodel);
+							}else{		
+								teambasicmodel.setCreateTime(new Date());
+								count=teambasicService.save(teambasicmodel);
+							}
+							System.out.println("第:"+jj+"条,执行结果:"+count+"=数据增加信息:"+teamName+"\n");
 						}
 						//////////////////////开始存储///////////////////
 					}
@@ -352,10 +313,10 @@ public class TeamAndPlayers {
 	 * 
 	 * @throws IOException
 	 */
-	@Scheduled(fixedRate = 1000 * 6)
+	//@Scheduled(fixedRate = 1000 * 6)
 	//@Scheduled(cron="0 48 19 ? * *")
 	public void getHltvTeanMatchesInfo() throws IOException {			
-		redisutil.getconnection();
+		//redisutil.getconnection();
 		List<Matches> insert=new ArrayList<Matches>();
 		String errname="";
 		Gson jsonObject = new Gson();		
@@ -368,6 +329,7 @@ public class TeamAndPlayers {
 		String Map="";
 		String Result="";
 		String WL="";
+		int jj=0;
 		try {			
 			// 查询HLTV站点的所有的团队信息
 			String hltvurl = MessageFormat.format("{0}/stats/teams?minMapCount=0", urlhltv);
@@ -379,12 +341,13 @@ public class TeamAndPlayers {
 					Document containerDoc = Jsoup.parse(element.toString());
 					Elements urlm = containerDoc.select("tbody").select("tr");
 					for (Element element2 : urlm) {
+						++jj;
+						 insert=new ArrayList<Matches>();
 						 teamName = element2.select("a").text();// HLTV站点的团队名称
 						 errname=teamName;
-						 teamId=getNumber(element2.select("a").attr("href").toString()).replace("/", "");// HLTV站点的团队id
+						 teamId=getNumber1(element2.select("a").attr("href").toString()).replace("/", "");// HLTV站点的团队id
 						 Thread.sleep(1000*3);
-						msg = HttpsUtils.Get(MessageFormat.format("{0}/stats/teams/matches/{1}/{2}", urlhltv,teamId,URLEncoder.encode(teamName,"utf-8")));//获取团队的比赛信息
-						System.out.println(MessageFormat.format("{0}/stats/teams/matches/{1}/{2}", urlhltv,teamId,URLEncoder.encode(teamName,"utf-8")));
+						 msg = HttpsUtils.Get(MessageFormat.format("{0}/stats/teams/matches/{1}/{2}", urlhltv,teamId,URLEncoder.encode(teamName,"utf-8")));//获取团队的比赛信息
 						if (msg.getCode()==200) {
 							Document doc1=Jsoup.parse(msg.getMessage());
 							Elements urlm1=doc1.getElementsByClass("stats-table no-sort");
@@ -424,16 +387,19 @@ public class TeamAndPlayers {
 							model.setTeamId(Integer.parseInt(teamId));
 							model.setTeamName(teamName);
 							model.setMatchesdata(jsonObject.toJson(insert));
-							model.setCreateTime(new Date());
 							// 验证存在不，不存在增加没存在修改
+							int count=0;
 							TeamMatches bo= teamMatchesService.checkexist(model);
 							if (bo!=null) {
 								model.setId(bo.getId());
-								int updatecount= teamMatchesService.save(model);
-							}else{									
-							  int addcount=	teamMatchesService.save(model);
+								model.setUpdateTime(new Date());
+								count=teamMatchesService.save(model);
+							}else{		
+							  model.setCreateTime(new Date());
+							  count=teamMatchesService.save(model);
 							  String vv="";
 							}
+							System.out.println(MessageFormat.format("比赛信息:第{3}条,执行结果:{4}=={0}/stats/teams/matches/{1}/{2}", urlhltv,teamId,URLEncoder.encode(teamName,"utf-8"),jj,count));
 						}
 					}
 				}
@@ -451,10 +417,10 @@ public class TeamAndPlayers {
 	 * 
 	 * @throws IOException
 	 */
-	@Scheduled(fixedRate = 1000 * 8)
+	//@Scheduled(fixedRate = 1000 * 8)
 	//@Scheduled(cron="0 48 19 ? * *")
 	public void getHltvTeanParentsMapsInfo() throws IOException {			
-		redisutil.getconnection();
+		//redisutil.getconnection();
 		List<TeamMapsparent> insert=new ArrayList<TeamMapsparent>();
 		String errname="";
 		Gson jsonObject = new Gson();		
@@ -464,6 +430,7 @@ public class TeamAndPlayers {
 		String mapBreakdown="";
 		String mapHighlight="";
 		String mapOverview="";
+		int jj=0;
 		try {			
 			// 查询HLTV站点的所有的团队信息
 			String hltvurl = MessageFormat.format("{0}/stats/teams?minMapCount=0", urlhltv);
@@ -475,12 +442,12 @@ public class TeamAndPlayers {
 					Document containerDoc = Jsoup.parse(element.toString());
 					Elements urlm = containerDoc.select("tbody").select("tr");
 					for (Element element2 : urlm) {
+						++jj;
 						 teamName = element2.select("a").text();// HLTV站点的团队名称
 						 errname=teamName;
-						 teamId=getNumber(element2.select("a").attr("href").toString()).replace("/", "");// HLTV站点的团队id
+						 teamId=getNumber1(element2.select("a").attr("href").toString()).replace("/", "");// HLTV站点的团队id
 						 Thread.sleep(1000*3);
-						msg = HttpsUtils.Get(MessageFormat.format("{0}/stats/teams/maps/{1}/{2}", urlhltv,teamId,URLEncoder.encode(teamName,"utf-8")));//获取团队的比赛信息
-						System.out.println(MessageFormat.format("{0}/stats/teams/maps/{1}/{2}", urlhltv,teamId,URLEncoder.encode(teamName,"utf-8")));
+						 msg = HttpsUtils.Get(MessageFormat.format("{0}/stats/teams/maps/{1}/{2}", urlhltv,teamId,URLEncoder.encode(teamName,"utf-8")));//获取团队的比赛信息
 						if (msg.getCode()==200) {
 							/////////////////////////////存储 Map breakdown 和 Map highlight///////////////
 							TeamMapsparent model=null;
@@ -559,18 +526,21 @@ public class TeamAndPlayers {
 							model.setTeamName(teamName);
 							model.setMapBreakdown(mapBreakdown);
 							model.setMapHighlight(mapHighlight);
-							model.setMapOverview(mapOverview);
-							model.setCreateTime(new Date());
+							model.setMapOverview(mapOverview);							
 							//insert.add(model);	
 							// 验证存在不，不存在增加没存在修改
-							TeamMapsparent bo= teamMapsparentService.checkexist(model);
+							int count=0;
+							TeamMapsparent bo=teamMapsparentService.checkexist(model);
 							if (bo!=null) {
 								model.setId(bo.getId());
-								int updatecount= teamMapsparentService.save(model);
-							}else{									
-							  int addcount=	teamMapsparentService.save(model);
+								model.setUpdateTime(new Date());
+								count=teamMapsparentService.save(model);
+							}else{		
+								model.setCreateTime(new Date());
+								count=teamMapsparentService.save(model);
 							  String vv="";
 							}
+							System.out.println(MessageFormat.format("地图,第{3}条，执行:{4}=={0}/stats/teams/maps/{1}/{2}", urlhltv,teamId,URLEncoder.encode(teamName,"utf-8"),jj,count));
 						}
 						
 				        ////////开始存储////////////////
@@ -592,10 +562,10 @@ public class TeamAndPlayers {
 	 * 
 	 * @throws IOException
 	 */
-	@Scheduled(fixedRate = 1000 * 10)
+	//@Scheduled(fixedRate = 1000 * 10)
 	//@Scheduled(cron="0 48 19 ? * *")
 	public void getHltvTeanMapsExpansionInfo() throws IOException {			
-		redisutil.getconnection();
+		//redisutil.getconnection();
 		List<TeamMapschild> insert=new ArrayList<TeamMapschild>();
 		String errname="";
 		Gson jsonObject = new Gson();		
@@ -620,9 +590,10 @@ public class TeamAndPlayers {
 					Document containerDoc = Jsoup.parse(element.toString());
 					Elements urlm = containerDoc.select("tbody").select("tr");
 					for (Element element2 : urlm) {
+						++jj;
 						 teamName = element2.select("a").text();// HLTV站点的团队名称
 						 errname=teamName;
-						 teamId=getNumber(element2.select("a").attr("href").toString()).replace("/", "");// HLTV站点的团队id
+						 teamId=getNumber1(element2.select("a").attr("href").toString()).replace("/", "");// HLTV站点的团队id
 						 Thread.sleep(1000*3);
 						msg = HttpsUtils.Get(MessageFormat.format("{0}/stats/teams/maps/{1}/{2}", urlhltv,teamId,URLEncoder.encode(teamName,"utf-8")));//获取团队的比赛信息
 						if (msg.getCode()==200) {
@@ -634,9 +605,9 @@ public class TeamAndPlayers {
 							for (Element element3 : urlm2) {								
 								String url=element3.select("a").attr("href").toString();
 								mapstypeId=getNumber1(url).replaceAll("(\\/)", "");//扩展地图的id
-								mapstypeName=element3.select("a").text();// 扩展地图的名称								
+								mapstypeName=element3.select("a").text();// 扩展地图的名称	
+								Thread.sleep(1000*3);
 								msg=HttpsUtils.Get(urlhltv+url);//获取扩展地图的连接拿取数据
-								System.out.println(urlhltv+url);
 								if (msg.getCode()==200) {
 									List<Map<String, Object>> rawstatsmaplist=new ArrayList<>();
 									Map<String, Object> rawstatsmap=new HashMap<>();
@@ -722,24 +693,22 @@ public class TeamAndPlayers {
 									model.setMatches(matches);
 									//insert.add(model);	
 									// 验证存在不，不存在增加没存在修改
+									int count=0;
 									TeamMapschild bo= teamMapschildService.checkexist(model);
 									if (bo!=null) {
 										model.setId(bo.getId());
-										int updatecount= teamMapschildService.save(model);
-									}else{									
-									  int addcount=	teamMapschildService.save(model);
+										model.setUpdateTime(new Date());
+										count= teamMapschildService.save(model);
+									}else{			
+										model.setCreateTime(new Date());
+										count=teamMapschildService.save(model);
 									  String vv="";
 									}
+									System.out.println("子地图,第"+jj+"条==结果:"+count+""+urlhltv+url);
 								}
 								
 							}
 						}
-	                     //////////////////////开始存储///////////////////////
-						jj++;
-						if (jj==2) {
-							//redisutil.setString("addTeamMapsExpansion",jsonObject.toJson(insert));
-							String vv="";
-						}	
 					}
 					
 				}
@@ -764,7 +733,7 @@ public class TeamAndPlayers {
 	//@Scheduled(fixedRate = 1000 * 6)
 	//@Scheduled(cron="0 48 19 ? * *")
 	public void getHltvGamePlayersInfo() throws IOException {	
-		redisutil.getconnection();
+		//redisutil.getconnection();
 		List<GamePlayers> insertlist=new ArrayList<>();
 		Gson jsonObject = new Gson();
 		String playerId="0";
@@ -857,7 +826,7 @@ public class TeamAndPlayers {
 	//@Scheduled(fixedRate = 1000 * 6)
 	//@Scheduled(cron="0 48 19 ? * *")
 	public void getHLTVGamerPlayersBasicInfo(){
-		redisutil.getconnection();
+		//redisutil.getconnection();
 		Gson jsonObject = new Gson();
 		String playerId="0";
 		String nickname="";
