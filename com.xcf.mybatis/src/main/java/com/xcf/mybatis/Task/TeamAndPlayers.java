@@ -562,7 +562,7 @@ public class TeamAndPlayers {
 	 * 
 	 * @throws IOException
 	 */
-	@Scheduled(fixedRate = 1000 * 10)
+	//@Scheduled(fixedRate = 1000 * 10)
 	//@Scheduled(cron="0 48 19 ? * *")
 	public void getHltvTeanMapsExpansionInfo() throws IOException {			
 		//redisutil.getconnection();
