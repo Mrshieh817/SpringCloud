@@ -116,10 +116,5 @@ public class GamePlayersBasic extends BaseModel {
 	 * 修改时间
 	 */
 	private Date updateTime;
-	
-	
-	
-	
-	
 
 }
