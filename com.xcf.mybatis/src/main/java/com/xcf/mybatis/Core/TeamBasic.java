@@ -28,6 +28,11 @@ public class TeamBasic extends BaseModel {
 	 * 国旗
 	 */
 	private String nationimgUrl;
+	/**
+	 * 世界排名
+	 */
+	
+	private String worldRanking;
 	
 	/**
 	 * 国家
@@ -42,10 +47,25 @@ public class TeamBasic extends BaseModel {
 	 * 地区
 	 */
 	private Integer region;//到时候用枚举
+	
+	/**
+	 * 地区排名
+	 */
+	private String regionRanking;
 	/**
 	 *累计金额
 	 */
 	private BigDecimal totalMoney;
+	/**
+	 * 奖杯，存储json
+	 */
+	
+	private String trophy;
+	/**
+	 * 队员存储json
+	 */
+	
+	private String palyers;
 	
 	/**
 	 * 最近匹配统计信息(JSON)
