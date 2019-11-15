@@ -58,7 +58,7 @@ import com.xcf.mybatis.Tool.redis.RedisUtil;
  * @author 作者:大飞
  * @version 创建时间：2019年10月28日 下午2:30:17 类说明
  */
-@Component
+//@Component
 public class TeamAndPlayers {
 	/*@Autowired
 	private RedisUtil redisutil;*/
@@ -403,7 +403,9 @@ public class TeamAndPlayers {
 										date=element4.select("td").get(0).select("a").text();//时间
 										eventmap.put("img", urlhltv+element4.select("td").get(1).select("img").attr("src"));//event 图片
 										eventmap.put("name", element4.select("td").get(1).select("a").text());	// event 名称
+										eventmap.put("teamid",getNumber1(element4.select("td").get(1).select("a").attr("href")).replaceAll("(\\/)", ""));	// event 团队id
 										opponentmap.put("img", element4.select("td").get(3).select("img").attr("src"));// opponent 图片
+										opponentmap.put("teamid", getNumber1(element4.select("td").get(3).select("a").attr("href")).replaceAll("(\\/)", ""));// opponent  团队id
 										opponentmap.put("name", element4.select("td").get(3).select("a").text());	//opponent 名称
 										Event=jsonObject.toJson(eventmap);
 										Opponent=jsonObject.toJson(opponentmap);
@@ -555,7 +557,8 @@ public class TeamAndPlayers {
 								}
 								if (viewname.length()>0) {									
 									listmapOverviewmap=new HashMap<String,Object>();
-									listmapOverviewmap.put(viewname,maplist);
+									listmapOverviewmap.put("name",viewname);
+									listmapOverviewmap.put("value",maplist);
 									Totalmaplist.add(listmapOverviewmap);
 								}								
 							}
