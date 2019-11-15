@@ -121,7 +121,7 @@ public class TeamAndPlayers {
 	 * 
 	 * @throws IOException
 	 */
-	@Scheduled(fixedRate = 1000 * 6)
+	//@Scheduled(fixedRate = 1000 * 6)
 	//@Scheduled(cron="0 48 19 ? * *")
 	public void getHltvBasicTeanInfo() throws IOException {			
 		//redisutil.getconnection();
@@ -546,8 +546,10 @@ public class TeamAndPlayers {
 										mapOverviewmap=new HashMap<>();
 										String biggest=element5.select("div").get(2).child(0).text();
 										String vs=element5.select("div").get(2).child(1).text();
+										String teamimg=element5.select("img").attr("src").toString();
 										mapOverviewmap.put("bigname", biggest);
 										mapOverviewmap.put("bigvalue", vs);
+										mapOverviewmap.put("bigimg", teamimg);
 										maplist.add(mapOverviewmap);
 									}	
 								}
@@ -706,8 +708,10 @@ public class TeamAndPlayers {
 											if (element4.select("tbody").select("tr").size()>=1) {									
 												String date=element5.select("td").get(0).select("a").text();//时间												
 												opponentmap.put("img", element5.select("td").get(1).select("img").attr("src"));// opponent 图片
+												opponentmap.put("teamid",getNumber1(element5.select("td").get(1).select("a").attr("href")).replaceAll("(\\/)", ""));// opponent 团队id
 												opponentmap.put("name", element5.select("td").get(1).select("a").text());	//opponent 名称
 												eventmap.put("img", element5.select("td").get(2).select("img").attr("src"));//event 图片
+												eventmap.put("teamid", getNumber1(element5.select("td").get(2).select("a").attr("href")).replaceAll("(\\/)", ""));//event 团队teamid
 												eventmap.put("name", element5.select("td").get(2).select("a").text());	// event 名称
 												String Result=element5.select("td").get(3).text().replaceAll("(\\s)", "");// 比分											
 												matchesmap.put("date", date);

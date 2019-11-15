@@ -6,10 +6,12 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    #url: jdbc:mysql://192.168.139.128:3306/Movie?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
-    url: jdbc:mysql://172.16.20.47:3306/zhuge?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
-    username: igxecom
-    password: igxecom2019
+    url: jdbc:mysql://192.168.139.128:3306/Movie?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+    username: root
+    password: Root-123
+    #url: jdbc:mysql://172.16.20.47:3306/zhuge?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    #username: igxecom
+    #password: igxecom2019
   redis:
    host: 172.16.15.149
    port: 6379

@@ -1,6 +1,7 @@
 package com.xcf.mybatis.Controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -34,7 +35,8 @@ public class SysUserController {
 	 */
 	@RequestMapping("/list")
 	public Object list() {
-		return sysUserMapper.selectAll();
+	  Object value=sysUserMapper.selectAll().stream().map(SysUser->SysUser.getName()).collect(Collectors.toList());
+		return value;
 	}
 	
 	@RequestMapping("/get/{id}")
