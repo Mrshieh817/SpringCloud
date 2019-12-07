@@ -20,7 +20,7 @@ public class productController {
 	public Usermodel test() {
 		Usermodel o = new Usermodel();
 		o.setName("我是大飞吖-product2222222222");
-		o.setAdress("重庆江北");
+		o.setAdress("重庆江北222");
 		return o;
 	} 
 	

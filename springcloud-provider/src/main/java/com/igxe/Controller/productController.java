@@ -1,5 +1,7 @@
 package com.igxe.Controller;
 
+import java.util.Enumeration;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,8 +22,9 @@ import com.igxe.tool.CookieUtil;
 public class productController {
 	@GetMapping({"/test"})
 	public Usermodel test(HttpServletRequest request) {
+		Enumeration<String> headerNames = request.getHeaderNames();
 		Usermodel o = new Usermodel();
-		o.setName("我是大飞吖-product111111111,Header:"+request.getHeader("xcf")+"cookies:"+CookieUtil.getValue(request,"ffcoo"));
+		o.setName("我是大飞吖-product111111111,Header:"+headerNames);
 		o.setAdress("重庆江北");
 		return o;
 	} 

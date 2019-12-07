@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.igxe.client.userclient;
 import com.igxe.model.Usermodel;
+import com.igxe.tool.CookieUtil;
 
 /**
  * @author 作者:大飞
@@ -29,9 +30,10 @@ public class UserController {
 	public Usermodel test(HttpServletRequest request,HttpServletResponse response) {
 		Cookie cookie=new Cookie("ffcoo", "cookeis啊啊啊啊");
 		response.addCookie(cookie);
+		CookieUtil.set(response, "ffcoo", "cookeis啊啊啊啊",1000*60*60);
 		Usermodel o = new Usermodel();
-		o.setName("我是大飞吖"+request.getHeader("xcf"));
-		o.setAdress("重庆江北");
+		o.setName("我是大飞吖11111"+request.getHeader("xcf"));
+		o.setAdress("重庆江北1111");
 		return o;
 	} 
 	

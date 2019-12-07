@@ -25,8 +25,8 @@ public class UserController {
 	@GetMapping({"/test"})
 	public Usermodel test() {
 		Usermodel o = new Usermodel();
-		o.setName("我是大飞吖");
-		o.setAdress("重庆江北");
+		o.setName("我是大飞吖2222");
+		o.setAdress("重庆江北2222");
 		return o;
 	} 
 	
