@@ -23,8 +23,9 @@ public class productController {
 	@GetMapping({"/test"})
 	public Usermodel test(HttpServletRequest request) {
 		Enumeration<String> headerNames = request.getHeaderNames();
+		String xcf=request.getHeader("xcf");
 		Usermodel o = new Usermodel();
-		o.setName("我是大飞吖-product111111111,Header:"+headerNames);
+		o.setName("我是大飞吖-product111111111,Header:"+xcf);
 		o.setAdress("重庆江北");
 		return o;
 	} 
