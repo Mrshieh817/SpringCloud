@@ -12,5 +12,6 @@ public class SysUser {
 	private Integer id;
 	private String name;
 	private String pass;
+	private String tel;
 
 }
