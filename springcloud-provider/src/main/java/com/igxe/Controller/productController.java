@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.igxe.model.Usermodel;
-import com.igxe.tool.CookieUtil;
 
 /**
 * @author 作者:大飞
@@ -20,6 +19,7 @@ import com.igxe.tool.CookieUtil;
 @RestController
 @RequestMapping({ "product"})
 public class productController {
+	@SuppressWarnings("unused")
 	@GetMapping({"/test"})
 	public Usermodel test(HttpServletRequest request) {
 		Enumeration<String> headerNames = request.getHeaderNames();

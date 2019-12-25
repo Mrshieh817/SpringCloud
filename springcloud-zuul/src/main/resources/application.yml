@@ -14,9 +14,20 @@ zuul:
     pservice:
       path: /p/**
       serviceId: product
+  retryable: true
 ribbon:
   eureka:
     enabled: true #是否在ribbon中使用
+
+#product是服务的名称
+product:
+  ribbon:
+    ReadTimeout: 2000
+    ConnectTimeout: 2000
+    #对当前实例的重试次数
+    MaxAutoRetries: 3
+    #切换实例的重试次数
+    MaxAutoRetriesNextServer: 0
 
     
     

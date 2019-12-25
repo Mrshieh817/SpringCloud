@@ -32,6 +32,11 @@
 			<artifactId>spring-cloud-starter-hystrix-dashboard</artifactId>
 			<version>1.4.7.RELEASE</version>
 		</dependency>
+		<!-- 出错重试 -->
+		<dependency>
+			<groupId>org.springframework.retry</groupId>
+			<artifactId>spring-retry</artifactId>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
