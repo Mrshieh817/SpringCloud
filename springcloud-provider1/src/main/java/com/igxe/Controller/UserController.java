@@ -1,6 +1,7 @@
 package com.igxe.Controller;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,10 +24,10 @@ public class UserController {
 	
 	
 	@GetMapping({"/test"})
-	public Usermodel test() {
+	public Usermodel test(HttpServletRequest request) {
 		Usermodel o = new Usermodel();
 		o.setName("我是大飞吖2222");
-		o.setAdress("重庆江北2222");
+		o.setAdress("重庆江北2222==获取session共享:"+request.getSession().getAttribute("xcf"));
 		return o;
 	} 
 	

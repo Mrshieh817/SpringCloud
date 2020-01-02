@@ -28,6 +28,7 @@ public class UserController {
 	
 	@GetMapping({"/test"})
 	public Usermodel test(HttpServletRequest request,HttpServletResponse response) {
+		request.getSession().setAttribute("xcf", "woshifafei");
 		Cookie cookie=new Cookie("ffcoo", "cookeis啊啊啊啊");
 		response.addCookie(cookie);
 		CookieUtil.set(response, "ffcoo", "cookeis啊啊啊啊",1000*60*60);
