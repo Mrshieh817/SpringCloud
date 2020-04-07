@@ -2,7 +2,7 @@ spring:
   application:
     name: rndealer-eureka-zuul #在注册中心显示的名字
 server:
-  port: 10086 #项目运行的端口
+  port: 10081 #项目运行的端口
 
 eureka:
   client:
