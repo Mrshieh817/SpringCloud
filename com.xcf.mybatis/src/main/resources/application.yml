@@ -13,7 +13,7 @@ spring:
     username: igxecom
     password: igxecom2019
   redis:
-   host: 172.16.15.149
+   host: 172.16.16.14
    port: 6379
    password: null
    timeout: 300
