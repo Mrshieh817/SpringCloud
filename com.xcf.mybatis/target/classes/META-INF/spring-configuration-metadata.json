@@ -1,0 +1,37 @@
+{
+  "groups": [
+    {
+      "name": "spring.redis",
+      "type": "com.xcf.mybatis.Tool.redis.RedisModel",
+      "sourceType": "com.xcf.mybatis.Tool.redis.RedisModel"
+    }
+  ],
+  "properties": [
+    {
+      "name": "spring.redis.database",
+      "type": "java.lang.Integer",
+      "sourceType": "com.xcf.mybatis.Tool.redis.RedisModel"
+    },
+    {
+      "name": "spring.redis.host",
+      "type": "java.lang.String",
+      "sourceType": "com.xcf.mybatis.Tool.redis.RedisModel"
+    },
+    {
+      "name": "spring.redis.password",
+      "type": "java.lang.String",
+      "sourceType": "com.xcf.mybatis.Tool.redis.RedisModel"
+    },
+    {
+      "name": "spring.redis.port",
+      "type": "java.lang.Integer",
+      "sourceType": "com.xcf.mybatis.Tool.redis.RedisModel"
+    },
+    {
+      "name": "spring.redis.timeout",
+      "type": "java.lang.Integer",
+      "sourceType": "com.xcf.mybatis.Tool.redis.RedisModel"
+    }
+  ],
+  "hints": []
+}
