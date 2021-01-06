@@ -5,6 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
+import com.codingapi.txlcn.tc.config.EnableDistributedTransaction;
+
 
 /**
 * @author 作者:大飞
@@ -16,6 +18,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableEurekaClient
 @EnableFeignClients
 @SpringBootApplication
+
+@EnableDistributedTransaction
 public class provider1Application {
  
     public static void main(String[] args) {
