@@ -2,6 +2,7 @@ package com.igxe.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.igxe.hystrix.UserClientFallback;
@@ -28,6 +29,9 @@ public interface userclient {
   Usermodel test();
   
   //通过项目服务名来获取方法，即使该项目没得方法，但是只要服务名称【项目名称】 为provider的都能访问该方法
-  @GetMapping("product/client/getxcf")
-  Usermodel getxcf(@RequestParam("id")Integer id);
+  @RequestMapping("product/client/getxcf")
+  Usermodel getxcf(@RequestParam(value = "id",defaultValue = "2",required = false) Integer id);
+  
+  @RequestMapping("user/city")
+  String city();
 }

@@ -2,6 +2,7 @@ package com.igxe.Controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.igxe.model.Usermodel;
@@ -24,8 +25,8 @@ public class productController {
 		return o;
 	} 
 	
-	@GetMapping({"/client/getxcf"})
-	public Usermodel getxcf(Integer id) {
+	@RequestMapping({"/client/getxcf"})
+	public Usermodel getxcf(@RequestParam("id") Integer id) {
 		Usermodel o = new Usermodel();
 		o.setName("我是大飞吖-我是大飞吖-我是大飞吖-我是大飞吖-我是大飞吖-"+id+"");
 		o.setAdress("重庆九龙坡");

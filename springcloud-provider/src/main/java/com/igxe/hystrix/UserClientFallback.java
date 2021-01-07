@@ -26,5 +26,11 @@ public class UserClientFallback implements  userclient {
 		usermodel.setAdress("error1111");
 		return usermodel;
 	}
+	
+	@Override
+	public String city() {
+		return "fail";
+	}
+	
 
 }

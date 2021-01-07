@@ -2,6 +2,7 @@ package com.igxe.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.igxe.hystrix.UserClientFallback;
@@ -24,6 +25,6 @@ public interface userclient {
   @GetMapping("product/test")
   Usermodel test();
   
-  @GetMapping("product/client/getxcf")
-  Usermodel getxcf(@RequestParam("id")Integer id);
+  @RequestMapping("product/client/getxcf")
+  Usermodel getxcf(@RequestParam("id") Integer id);
 }
