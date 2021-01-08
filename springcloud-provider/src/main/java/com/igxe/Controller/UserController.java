@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -70,8 +69,9 @@ public class UserController {
 		city model = new city();
 		model.setCountryId(2);
 		model.setLastUpdate(new Date());
-		
+		//发起方
 		boolean bo = cityService.add(model);
+		//被调方
 		String re2= client.city();
 		
 		

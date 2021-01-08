@@ -5,7 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 
 import tk.mybatis.spring.annotation.MapperScan;
@@ -21,15 +20,8 @@ import tk.mybatis.spring.annotation.MapperScan;
 @EnableEurekaClient
 @EnableFeignClients
 @SpringBootApplication
-
-
 @MapperScan("com.igxe.mapper")
 @ComponentScan("com.igxe")
-
-
-//下面的注解是TX-LCN的
-//@EnableDistributedTransaction
-//@EnableTransactionManagement
 public class providerApplication {
  
     public static void main(String[] args) {

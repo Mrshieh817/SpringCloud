@@ -1,9 +1,6 @@
 Manifest-Version: 1.0
 Implementation-Title: com.xcf.mybatis
 Implementation-Version: 0.0.1-SNAPSHOT
-Built-By: xcf
-Implementation-Vendor-Id: SpringCloud-parent
-Build-Jdk: 1.8.0_73
-Implementation-URL: http://maven.apache.org
+Build-Jdk-Spec: 1.8
 Created-By: Maven Integration for Eclipse
 
