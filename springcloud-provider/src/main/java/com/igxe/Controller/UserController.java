@@ -71,10 +71,9 @@ public class UserController {
 		model.setLastUpdate(new Date());
 		//发起方
 		boolean bo = cityService.add(model);
-		//被调方
-		String re2= client.city();
+	
 		
 		
-		return bo == true ? "success+"+re2+"" : "fail"+re2;
+		return bo == true ? "success":"false";
 	}
 }

@@ -13,6 +13,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
+import io.seata.core.context.RootContext;
 
 /**
  * @author 作者:大飞
@@ -63,6 +64,10 @@ public class FeignConfiguration implements RequestInterceptor {
 			template.body(body.toString());
 			logger.info("feign interceptor body:{}", body.toString());
 		}
+		
+		// 解决seata的xid未传递
+        String xid = RootContext.getXID();
+        template.header(RootContext.KEY_XID, xid);
 
 	}
 }
