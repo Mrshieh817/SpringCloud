@@ -16,7 +16,7 @@ public class cityServiceimpl implements cityService {
 	@Override
 	public boolean add(city model) {
 
-		model.setCity("ee1111888888888888888144re");
+		model.setCity("ee1111888888888888884444444444444444444444444444444444444444444448144re");
 		Integer countInteger = cityMapper.insert(model);
 		if (countInteger > 0) {
 			return true;
