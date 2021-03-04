@@ -1,11 +1,11 @@
 com\igxe\tool\FeignHystrixConcurrencyStrategyIntellif.class
 com\igxe\provider1Application.class
 com\igxe\Controller\UserController.class
+com\igxe\config\SessionConfig.class
+com\igxe\model\Usermodel.class
+com\igxe\tool\FeignConfiguration.class
 com\igxe\client\userclient.class
 com\igxe\tool\CookieUtil.class
 com\igxe\Controller\productController.class
-com\igxe\config\SessionConfig.class
 com\igxe\hystrix\UserClientFallback.class
 com\igxe\tool\FeignHystrixConcurrencyStrategyIntellif$WrappedCallable.class
-com\igxe\model\Usermodel.class
-com\igxe\tool\FeignConfiguration.class
