@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 * 类说明
 */
 
-@RestController
-@RequestMapping("/em")
+//@RestController
+//@RequestMapping("/em")
 public class SESEmailController {
 	// Replace sender@example.com with your "From" address.
     // This address must be verified.

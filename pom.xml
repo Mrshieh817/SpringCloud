@@ -122,6 +122,5 @@
 		<module>springcloud-provider1</module>
 		<module>springcloud-zuul</module>
 		<module>com.xcf.mybatis</module>
-		<module>txlcn-tm</module>
 	</modules>
 </project>

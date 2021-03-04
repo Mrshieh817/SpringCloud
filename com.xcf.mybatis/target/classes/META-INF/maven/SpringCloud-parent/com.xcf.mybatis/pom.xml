@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <project
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>SpringCloud-parent</groupId>
@@ -82,7 +83,14 @@
 		</dependency>
 	</dependencies>
 	<build>
+		<!--之前是用来解决@@问题 -->
+		<!-- resources> <resource> <directory>src/main/resources</directory> <filtering>true</filtering> 
+			</resource> </resources> -->
 		<plugins>
+			<!--之前是用来解决@@问题 -->
+			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-resources-plugin</artifactId> 
+				<configuration> <delimiters> <delimiter>@</delimiter> </delimiters> <useDefaultDelimiters>false</useDefaultDelimiters> 
+				</configuration> </plugin> -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>

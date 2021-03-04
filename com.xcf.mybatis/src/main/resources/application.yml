@@ -1,7 +1,10 @@
 #服务端口配置
+#测试是否用URL地址前缀 servlet.context-path 加了之后需要在访问ip:port/xcf 才能正常访问
 server:
   port: 8868
   tomcat.uri-encoding: UTF-8
+  servlet:
+    context-path: /xcf
 #数据源的配置
 spring:
   datasource:
@@ -13,7 +16,7 @@ spring:
 #    username: igxecom
 #    password: igxecom2019
   redis:
-   host: 172.16.17.76
+   host: 192.168.10.65
    port: 6379
    password: null
    timeout: 300
@@ -29,4 +32,7 @@ mybatis:
 logging:
   level:
    com.xcf.mybatis.Mapper: debug  # 改成你的mapper文件所在包路径
+#test @canshu@
+aite:
+ canshu: '@parent.artifactId@'
     

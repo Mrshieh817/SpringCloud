@@ -113,6 +113,6 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-devtools/2.1.7.RELEASE/spring-boot-devtools-2.1.7.RELEASE.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot/2.1.7.RELEASE/spring-boot-2.1.7.RELEASE.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-autoconfigure/2.1.7.RELEASE/spring-boot-autoconfigure-2.1.7.RELEASE.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="EXTJAR" id="G:\java_pro\xcf_javapro\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\lib\javax.mail.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\lib\javax.mail.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="PLUGIN" id="org.eclipse.jst.ws.annotations.core" enabled="true" runInBatchMode="false"/>
 </factorypath>
