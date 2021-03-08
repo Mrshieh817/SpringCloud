@@ -1,5 +1,7 @@
 package com.xcf.mybatis.Core;
 
+import java.io.Serializable;
+
 import javax.persistence.Transient;
 
 import lombok.Data;
@@ -10,7 +12,7 @@ import lombok.Data;
 * 类说明
 */
 @Data
-public class SysUser {
+public class SysUser implements Serializable {
 	private Integer id;
 	private String name;
 	private String pass;

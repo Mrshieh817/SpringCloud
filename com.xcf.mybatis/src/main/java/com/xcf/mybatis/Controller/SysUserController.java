@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,12 +34,15 @@ public class SysUserController {
 	 * 
 	 * @return
 	 */
+	
 	@RequestMapping("/list")
 	public Object list() {
 	  Object value=sysUserMapper.selectAll().stream().map(SysUser->SysUser.getName()).collect(Collectors.toList());
+	  System.out.println(value);
 		return value;
 	}
 	
+	@Cacheable(cacheNames = "user",key = "#id")
 	@RequestMapping("/get/{id}")
 	public List<SysUser> get(@PathVariable(name="id") Integer id)
 	{

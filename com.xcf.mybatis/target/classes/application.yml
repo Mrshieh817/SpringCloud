@@ -9,7 +9,7 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.139.128:3306/Movie?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+    url: jdbc:mysql://192.168.42.128:3306/Movie?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
     username: root
     password: Root-123
 #    url: jdbc:mysql://172.16.20.47:3306/zhuge?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
@@ -21,6 +21,8 @@ spring:
    password: null
    timeout: 300
    database: 1
+  cache:
+    type: redis #设置spring的二级缓存为redis
 #mybatis配置    
 mybatis:
   mapper-locations: classpath:mappers/*.xml
