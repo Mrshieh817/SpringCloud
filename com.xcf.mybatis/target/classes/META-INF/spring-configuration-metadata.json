@@ -10,7 +10,8 @@
     {
       "name": "spring.redis.database",
       "type": "java.lang.Integer",
-      "sourceType": "com.xcf.mybatis.Tool.redis.RedisModel"
+      "sourceType": "com.xcf.mybatis.Tool.redis.RedisModel",
+      "defaultValue": 0
     },
     {
       "name": "spring.redis.host",
@@ -25,12 +26,14 @@
     {
       "name": "spring.redis.port",
       "type": "java.lang.Integer",
-      "sourceType": "com.xcf.mybatis.Tool.redis.RedisModel"
+      "sourceType": "com.xcf.mybatis.Tool.redis.RedisModel",
+      "defaultValue": 0
     },
     {
       "name": "spring.redis.timeout",
       "type": "java.lang.Integer",
-      "sourceType": "com.xcf.mybatis.Tool.redis.RedisModel"
+      "sourceType": "com.xcf.mybatis.Tool.redis.RedisModel",
+      "defaultValue": 0
     }
   ],
   "hints": []

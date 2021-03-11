@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.xcf.mybatis.Core.SysUser;
 import com.xcf.mybatis.Mapper.SysUserMapper;
 import com.xcf.mybatis.Service.SysuserService;
+import com.xcf.mybatis.aspect.WebLog;
+
+import io.swagger.annotations.ApiOperation;
 
 /**
  * @author 作者:大飞
@@ -36,6 +39,7 @@ public class SysUserController {
 	 */
 	
 	@RequestMapping("/list")
+	@ApiOperation("hehe")
 	public Object list() {
 	  Object value=sysUserMapper.selectAll().stream().map(SysUser->SysUser.getName()).collect(Collectors.toList());
 	  System.out.println(value);
@@ -52,6 +56,8 @@ public class SysUserController {
 		}
 		return sysuserService.Getuserlist(model);
 	}
+	
+	@WebLog(value = "AOP简单日志记录",description = "看看能不能记录上",params = {"id","name"})
 	@RequestMapping("getinfo")
 	public Object getinfo(@RequestParam(name="id",defaultValue="0") Integer id){
 		return sysuserService.getuserinfobyid(id);

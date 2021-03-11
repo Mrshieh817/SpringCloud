@@ -23,11 +23,13 @@ E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\Core\en
 E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\Mapper\GamePlayersMatchesMapper.java
 E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\Core\Matches.java
 E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\Service\impl\GamePlayersWeaponsServiceimpl.java
+E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\aspect\SimpleControllerLogAspect.java
 E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\Core\BaseModel.java
 E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\Service\GamePlayersOpponentsService.java
 E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\Service\GamePlayersClutchesService.java
 E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\Mapper\TeamMapschildMapper.java
 E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\Service\impl\GamePlayersServiceimpl.java
+E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\aspect\WebLog.java
 E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\Tool\HttpsUtils.java
 E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\Service\impl\TeambasicServiceimpl.java
 E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\Mapper\GamePlayersIndividualMapper.java
@@ -36,7 +38,9 @@ E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\Core\Te
 E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\Tool\redis\RedisUtil.java
 E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\Core\GamePlayersClutches.java
 E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\Service\GamePlayersEventService.java
+E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\aspect\SpringContextHolder.java
 E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\Core\TeamBasic.java
+E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\aspect\WebLogAspect.java
 E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\Controller\UserController.java
 E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\Core\GamePlayersWeapons.java
 E:\Own_Prigram\SpringCloud\com.xcf.mybatis\src\main\java\com\xcf\mybatis\Core\GamePlayersEvent.java
