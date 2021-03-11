@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
+import com.xcf.mybatis.aspect.WebLog;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

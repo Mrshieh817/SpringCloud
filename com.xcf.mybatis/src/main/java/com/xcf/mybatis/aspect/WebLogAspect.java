@@ -26,6 +26,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import io.swagger.annotations.ApiOperation;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import com.xcf.mybatis.aspect.WebLog;
 
 /**
  * @author xcf
@@ -34,11 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 @Aspect
 @Component
 @Slf4j
-<<<<<<< HEAD
-//@Profile({ "dev" })
-=======
 //@Profile({"dev", "prod", "test"})
->>>>>>> branch 'master' of https://github.com/Mrshieh817/SpringCloud.git
 public class WebLogAspect {
 	/**
 	 * 以自定义 @WebLog 注解为切点
