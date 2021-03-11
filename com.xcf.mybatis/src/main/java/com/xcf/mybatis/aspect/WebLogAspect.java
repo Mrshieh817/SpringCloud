@@ -34,7 +34,11 @@ import lombok.extern.slf4j.Slf4j;
 @Aspect
 @Component
 @Slf4j
+<<<<<<< HEAD
 //@Profile({ "dev" })
+=======
+//@Profile({"dev", "prod", "test"})
+>>>>>>> branch 'master' of https://github.com/Mrshieh817/SpringCloud.git
 public class WebLogAspect {
 	/**
 	 * 以自定义 @WebLog 注解为切点
