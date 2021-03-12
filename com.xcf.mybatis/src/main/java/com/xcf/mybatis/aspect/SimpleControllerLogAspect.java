@@ -39,7 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 public class SimpleControllerLogAspect {
 
 
-    @Before(value = "within(com.kailinjt.*.controller.*)&&@annotation(apiOperation)")
+    @Before(value = "within(com.mybaits.*.controller.*)&&@annotation(apiOperation)")
     public void before(JoinPoint point, ApiOperation apiOperation) {
 
         // 跳过该切面
