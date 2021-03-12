@@ -1,0 +1,10 @@
+.idea
+DEFAULT_GROUP
+logs
+*.iml
+target
+*.log
+me.md
+.classpath
+.project
+.settings
