@@ -65,7 +65,7 @@ public class SpringContextHolder implements ApplicationContextAware, DisposableB
         Optional.ofNullable(serverPortStr).ifPresent(s -> SpringContextHolder.serverPort = Integer.valueOf(s));
 
 
-        log.warn("当前注册中心配置:{}",applicationContext.getEnvironment().getProperty("spring.cloud.nacos.server-addr"));
+        log.warn("当前注册中心配置:{}",applicationContext.getEnvironment().getProperty("spring.redis.host"));
     }
 
     /**
