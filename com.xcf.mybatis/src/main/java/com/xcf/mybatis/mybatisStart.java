@@ -25,6 +25,8 @@ import tk.mybatis.spring.annotation.MapperScan;
 public class mybatisStart 
 {
 	public static void main(String[] args) {
+		//不知道为啥要加上这句话才能使用ES
+		System.setProperty("es.set.netty.runtime.available.processors","false");
 		SpringApplication.run(mybatisStart.class, args);
 	}
 	
