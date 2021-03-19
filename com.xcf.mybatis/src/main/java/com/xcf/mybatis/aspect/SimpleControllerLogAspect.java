@@ -2,15 +2,19 @@ package com.xcf.mybatis.aspect;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -24,6 +28,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
+import com.xcf.mybatis.Annotation.JsonRegularReplace;
+import com.xcf.mybatis.Annotation.RegularReplaceEnum;
 import com.xcf.mybatis.aspect.WebLog;
 
 import io.swagger.annotations.ApiOperation;
@@ -40,7 +47,7 @@ public class SimpleControllerLogAspect {
 
 
     @Before(value = "within(com.xcf.*.Controller.*)&&@annotation(apiOperation)")
-    public void before(JoinPoint point, ApiOperation apiOperation) {
+    public void before(JoinPoint point, ApiOperation apiOperation) throws Throwable {
 
         // 跳过该切面
         if (skipAop(point)) return;
@@ -55,6 +62,9 @@ public class SimpleControllerLogAspect {
             this.requestBodyLog((MethodInvocationProceedingJoinPoint) point);
         }
         this.swaggerApiLog(point, apiOperation, "{} => 开始");
+        ProceedingJoinPoint join=(ProceedingJoinPoint)point;
+        //拦截游客
+        this.extracted(join.proceed(), RegularReplaceEnum.VIP);
     }
 
     @AfterReturning(value = "@annotation(apiOperation)", returning = "returnObj", argNames = "apiOperation,returnObj")
@@ -173,6 +183,37 @@ public class SimpleControllerLogAspect {
             log.info(format, apiOperationValue);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+        }
+    }
+    
+    /**
+     * 执行掩码方案
+     **/
+    private void extracted(Object obj, RegularReplaceEnum replaceEnum) {
+        if (Objects.nonNull(obj)){
+            Field[] declaredFields = obj.getClass().getDeclaredFields();
+            for (Field field : declaredFields){
+                JsonRegularReplace annotation = field.getDeclaredAnnotation(JsonRegularReplace.class);
+                if (Objects.nonNull(annotation) && RegularReplaceEnum.isContain(annotation.contain(), replaceEnum)){
+                    InvocationHandler h = Proxy.getInvocationHandler(annotation);
+                    Field hField = null;
+                    try {
+                        hField = h.getClass().getDeclaredField("memberValues");
+                    } catch (NoSuchFieldException e) {
+                        log.error("掩码失败 NoSuchFieldException ，msg:{}", e.getMessage());
+                        e.printStackTrace();
+                    }
+                    hField.setAccessible(true);
+                    Map memberValues = null;
+                    try {
+                        memberValues = (Map) hField.get(h);
+                    } catch (IllegalAccessException e) {
+                        log.error("掩码失败 IllegalAccessException ，msg:{}", e.getMessage());
+                        e.printStackTrace();
+                    }
+                    memberValues.put("canReplaceEl", "T(Boolean).TRUE");
+                }
+            }
         }
     }
 

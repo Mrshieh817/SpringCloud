@@ -41,8 +41,8 @@ public class UserController {
 		model.setId(1008611);
 		//model.setName("中国移动");
 		model.setName(canshu);
-		model.setPass("10086");
-		model.setTel(telephone);
+		model.setPass("1008612501235698696");
+		model.setTel("18716398693");
 		return model;
 	}
 
