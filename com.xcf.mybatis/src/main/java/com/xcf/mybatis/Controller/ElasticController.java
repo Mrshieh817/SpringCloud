@@ -43,7 +43,7 @@ public class ElasticController {
 		// 用于分页是时候出现出真实的命中返回数据
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		searchSourceBuilder.trackTotalHits(true);
-
+		
 		// 设置查询调减方法
 		BoolQueryBuilder buider = QueryBuilders.boolQuery();
 		// 根据条件查
