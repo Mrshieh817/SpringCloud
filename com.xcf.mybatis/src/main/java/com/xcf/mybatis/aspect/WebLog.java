@@ -22,10 +22,10 @@ public @interface WebLog {
      *
      * @return
      */
-    @AliasFor("value")
+    //@AliasFor("value")
     String description() default "";
 
-    @AliasFor("description")
+    //@AliasFor("description")
     String value() default "";
 
     /**

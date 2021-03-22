@@ -79,7 +79,8 @@ public class RedisUtil {
 	@SuppressWarnings("deprecation")
 	private void returnJedis(Jedis jedis) {
 		if (jedis != null)
-			jedisPool.returnResource(jedis);
+			//jedisPool.returnResource(jedis);
+			return ;
 	}
 
 	/**
@@ -212,15 +213,17 @@ public class RedisUtil {
 	@SuppressWarnings("deprecation")
 	public void returnResource(JedisPool pool, Jedis redis) {
 		if (redis != null) {
-			pool.returnResourceObject(redis);
+			//pool.returnResourceObject(redis);
+			return;
 		}
 	}
 
 	@SuppressWarnings("deprecation")
 	public void show() {
 
-		jedisPool.returnResource(jedis);
-		shardedJedisPool.returnResource(shardedJedis);
+		//jedisPool.returnResource(jedis);
+		//shardedJedisPool.returnResource(shardedJedis);
+		return;
 
 	}
 
