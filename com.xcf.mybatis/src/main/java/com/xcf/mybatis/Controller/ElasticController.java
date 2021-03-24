@@ -6,6 +6,7 @@ package com.xcf.mybatis.Controller;
 */
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.Map;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.xcf.mybatis.Core.ElasticUser;
@@ -60,6 +62,20 @@ public class ElasticController {
 		double tt = timeStopWatch.getTotalTimeSeconds();
 		System.out.println("用时:" + tt);
 		return page;
+	}
+	
+	//测试Field字段属性反射
+	@RequestMapping("/get")
+	public void get(@RequestParam(value = "name",defaultValue = "baba")String name ) throws IllegalArgumentException, IllegalAccessException {
+		ElasticUser model=new ElasticUser(10,name,"重庆","90") ;
+		 Field[] fields=model.getClass().getDeclaredFields();  
+		 for (int i = 0; i < fields.length; i++) {
+			 fields[i].setAccessible(true);
+			 String dfString= fields[i].getName();
+			 Object ob= fields[i].get(model);
+			 System.out.println("object name:"+dfString+"===object value:"+ob);
+		}
+	
 	}
 
 }

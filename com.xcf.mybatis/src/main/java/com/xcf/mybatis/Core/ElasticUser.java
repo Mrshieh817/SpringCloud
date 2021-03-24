@@ -5,13 +5,17 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /** 
 * @author xcf 
 * @Date 创建时间：2021年3月18日 上午11:25:54 
 */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Document(indexName = "xcfin",type = "_doc",useServerConfiguration = true,createIndex = false)
 public class ElasticUser {
 	@Id
