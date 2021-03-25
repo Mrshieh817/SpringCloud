@@ -29,11 +29,18 @@ import com.xcf.mybatis.Core.ElasticUser;
 import com.xcf.mybatis.Core.Param;
 import com.xcf.mybatis.Service.ElasticService;
 import com.xcf.mybatis.Service.ElasticjianguanjiaService;
+import com.xcf.mybatis.Tool.redis.RedisUtil;
 import com.xcf.mybatis.aspect.WebLog;
 
 @RestController
 @RequestMapping("/es")
 public class ElasticController {
+	
+	@Autowired
+	RedisUtil redisutil;
+	
+	
+	
 	@Autowired
 	private ElasticService elasticservice;
 	
@@ -93,6 +100,16 @@ public class ElasticController {
 			 System.out.println("object name:"+dfString+"===object value:"+ob+"====description:"+description+"=====valueString:"+valueString);
 		}
 	
+	}
+	
+	/**
+	 * ceshi 
+	 * @return
+	 */
+	@RequestMapping("/redis")
+	public Object redis() {
+		redisutil.set("fff", "mr shieh");
+		return "success";
 	}
 
 }

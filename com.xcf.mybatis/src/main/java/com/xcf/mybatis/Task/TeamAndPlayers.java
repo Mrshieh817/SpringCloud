@@ -52,7 +52,6 @@ import com.xcf.mybatis.Service.TeamMapsparentService;
 import com.xcf.mybatis.Service.TeamMatchesService;
 import com.xcf.mybatis.Service.TeambasicService;
 import com.xcf.mybatis.Tool.HttpsUtils;
-import com.xcf.mybatis.Tool.redis.RedisUtil;
 
 /**
  * @author 作者:大飞
