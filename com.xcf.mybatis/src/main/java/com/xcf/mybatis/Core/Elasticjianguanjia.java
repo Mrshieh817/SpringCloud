@@ -12,11 +12,12 @@ import lombok.Data;
 * @Date 创建时间：2021年3月22日 上午11:34:50 
 */
 @Data
-@Document(indexName = "test",type = "_doc",useServerConfiguration = true,createIndex = false)
+@Document(indexName = "ik_test",type = "_doc",useServerConfiguration = true,createIndex = false)
 public class Elasticjianguanjia {
 	
 	@Id
-	private Integer version;
+	@Field(type = FieldType.Text,analyzer = "ik_max_word")
+	private String version;
 	
 	@Field(type = FieldType.Text,analyzer = "ik_max_word")
 	private String defendant;

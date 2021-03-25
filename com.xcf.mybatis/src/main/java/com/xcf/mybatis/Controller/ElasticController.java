@@ -6,8 +6,10 @@ package com.xcf.mybatis.Controller;
 */
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.Objects;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -22,10 +24,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.introspect.AnnotatedField;
 import com.xcf.mybatis.Core.ElasticUser;
 import com.xcf.mybatis.Core.Param;
 import com.xcf.mybatis.Service.ElasticService;
 import com.xcf.mybatis.Service.ElasticjianguanjiaService;
+import com.xcf.mybatis.aspect.WebLog;
 
 @RestController
 @RequestMapping("/es")
@@ -55,7 +59,7 @@ public class ElasticController {
 		System.out.println(searchSourceBuilder.toString());
 
 		// 第一个参数是页数page，第二个参数是每页数据数量pageSize
-		Pageable pageable = PageRequest.of(0, 10);
+		Pageable pageable = PageRequest.of(0, 400);
 		Page<Map<String, Object>> page = (Page) elasticjianguanjiaservice.search(searchSourceBuilder.query(), pageable);
 
 		timeStopWatch.stop();
@@ -67,13 +71,26 @@ public class ElasticController {
 	//测试Field字段属性反射
 	@RequestMapping("/get")
 	public void get(@RequestParam(value = "name",defaultValue = "baba")String name ) throws IllegalArgumentException, IllegalAccessException {
-		ElasticUser model=new ElasticUser(10,name,"重庆","90") ;
+		 //实体类 信息
+		 ElasticUser model=new ElasticUser(10,name,"重庆","90") ;
+		 //拿取被反射对象的基本信息，如字段注解，字段名称和它的值
 		 Field[] fields=model.getClass().getDeclaredFields();  
 		 for (int i = 0; i < fields.length; i++) {
+			 //setAccessible的作用是将类中的成员变量private变成可访问变量,然后获取里面value,故必须进行此操
 			 fields[i].setAccessible(true);
+			 //获取当前对象是否包含有Annotation相关的自定义注解
+			 WebLog annotatedFields= fields[i].getDeclaredAnnotation(WebLog.class);
+			 String description="";
+			 String valueString="";
+			 //判断当前对象是否有自定义注解
+			 if (Objects.nonNull(annotatedFields)) {
+				 //获取注解上的信息
+				  description= annotatedFields.description();
+				  valueString=annotatedFields.value();
+			 }
 			 String dfString= fields[i].getName();
 			 Object ob= fields[i].get(model);
-			 System.out.println("object name:"+dfString+"===object value:"+ob);
+			 System.out.println("object name:"+dfString+"===object value:"+ob+"====description:"+description+"=====valueString:"+valueString);
 		}
 	
 	}

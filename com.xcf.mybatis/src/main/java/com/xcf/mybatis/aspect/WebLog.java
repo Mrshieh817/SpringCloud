@@ -13,7 +13,7 @@ import org.springframework.core.annotation.AliasFor;
 * @Date 创建时间：2021年3月11日 下午1:50:22 
 */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
+@Target({ElementType.METHOD,ElementType.FIELD})
 @Documented
 public @interface WebLog {
 
