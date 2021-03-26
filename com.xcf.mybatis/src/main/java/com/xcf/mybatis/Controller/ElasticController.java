@@ -32,8 +32,12 @@ import com.xcf.mybatis.Service.ElasticjianguanjiaService;
 import com.xcf.mybatis.Tool.redis.RedisUtil;
 import com.xcf.mybatis.aspect.WebLog;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping("/es")
+@Api(value = "这是ES公共操作中心",tags = {"这是ES公共操作中心"})
 public class ElasticController {
 	
 	@Autowired
@@ -48,6 +52,7 @@ public class ElasticController {
 	private ElasticjianguanjiaService elasticjianguanjiaservice;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@ApiOperation("测试es的读取")
 	@RequestMapping("/test")
 	public Object test(@RequestBody Param p) {
 		StopWatch timeStopWatch = new StopWatch();
@@ -77,6 +82,7 @@ public class ElasticController {
 	
 	//测试Field字段属性反射
 	@RequestMapping("/get")
+	@ApiOperation("测试Field字段属性反射")
 	public void get(@RequestParam(value = "name",defaultValue = "baba")String name ) throws IllegalArgumentException, IllegalAccessException {
 		 //实体类 信息
 		 ElasticUser model=new ElasticUser(10,name,"重庆","90") ;

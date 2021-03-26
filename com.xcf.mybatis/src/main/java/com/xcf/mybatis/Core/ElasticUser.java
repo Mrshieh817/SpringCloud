@@ -7,6 +7,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import com.xcf.mybatis.aspect.WebLog;
 
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(indexName = "xcfin",type = "_doc",useServerConfiguration = true,createIndex = false)
+@ApiModel("es查询实体")
 public class ElasticUser {
 	@Id
 	private Integer id;
