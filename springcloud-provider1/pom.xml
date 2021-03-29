@@ -10,7 +10,7 @@
 	<artifactId>springcloud-provider1</artifactId>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring-cloud.version>Greenwich.RELEASE</spring-cloud.version>
+		<spring-cloud.version>Hoxton.RELEASE</spring-cloud.version>
 		<seata.version>0.9.0</seata.version>
 	</properties>
 	<dependencies>

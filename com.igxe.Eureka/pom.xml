@@ -9,12 +9,13 @@
 	<artifactId>com.igxe.Eureka</artifactId>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring-cloud.version>Greenwich.RELEASE</spring-cloud.version>
+		<spring-cloud.version>Hoxton.RELEASE</spring-cloud.version>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+			<version>2.2.0.RELEASE</version>
 		</dependency>
 		<!-- 为了Eureka登录的时候有账号密码安全权限 -->
 		<dependency>
