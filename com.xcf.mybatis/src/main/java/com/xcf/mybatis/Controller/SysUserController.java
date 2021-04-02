@@ -47,7 +47,7 @@ public class SysUserController {
 		return value;
 	}
 	
-	@Cacheable(cacheNames = "user",key = "#id")
+	@Cacheable(cacheNames = "user"+"#"+60,key = "#id")
 	@RequestMapping("/get/{id}")
 	public List<SysUser> get(@PathVariable(name="id") Integer id)
 	{

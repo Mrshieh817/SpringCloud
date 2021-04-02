@@ -23,6 +23,8 @@ spring:
    database: 1
   cache:
     type: redis #设置spring的二级缓存为redis
+    redis:
+      time-to-live: 10000 #统一默认cache缓存时间为一分钟，但是为了防止缓存雪崩，可以在实际缓存的方法上特定设置缓存时间
   data:
     elasticsearch:
       cluster-name: elasticsearch
