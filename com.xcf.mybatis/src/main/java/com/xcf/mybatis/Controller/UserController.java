@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.xcf.mybatis.Core.SysUser;
@@ -44,6 +45,21 @@ public class UserController {
 		model.setPass("1008612501235698696");
 		model.setTel("18716398693");
 		return model;
+	}
+	
+	@ApiOperation("测试自动补0")
+	@RequestMapping("/autoaddzero")
+	@ResponseBody
+	public Object autoaddzero(@RequestParam(name = "code", required = true) String code) {
+		int count = 10;
+		int oldcount = code.length();
+		if (oldcount < count) {
+			for (int i = 0; i < count - oldcount; i++) {
+				code = code + "0";
+			}
+		}
+		return code;
+
 	}
 
 }
