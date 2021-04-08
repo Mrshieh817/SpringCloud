@@ -46,7 +46,7 @@ import lombok.extern.slf4j.Slf4j;
 public class SimpleControllerLogAspect {
 
 
-    @Before(value = "within(com.xcf.*.Controller.*)&&@annotation(apiOperation)")
+    @Before(value = "within(com.xcf.mybatis.Controller.*)&&@annotation(apiOperation)")
     public void before(JoinPoint point, ApiOperation apiOperation) throws Throwable {
 
         // 跳过该切面
@@ -62,13 +62,11 @@ public class SimpleControllerLogAspect {
             this.requestBodyLog((MethodInvocationProceedingJoinPoint) point);
         }
         this.swaggerApiLog(point, apiOperation, "{} => 开始");
-        ProceedingJoinPoint join=(ProceedingJoinPoint)point;
-        //拦截游客
-        this.extracted(join.proceed(), RegularReplaceEnum.VIP);
+        
     }
 
     @AfterReturning(value = "@annotation(apiOperation)", returning = "returnObj", argNames = "apiOperation,returnObj")
-    public void afterReturning(JoinPoint point, ApiOperation apiOperation, Object returnObj) {
+    public void afterReturning(JoinPoint point, ApiOperation apiOperation, Object returnObj) throws Throwable {
 
         // 跳过该切面
         if (skipAop(point)) return;
@@ -77,6 +75,10 @@ public class SimpleControllerLogAspect {
             this.responseBodyLog(returnObj, "响应:{}");
         }
         this.swaggerApiLog(point, apiOperation, "{} => 结束");
+        
+        //ProceedingJoinPoint join=(ProceedingJoinPoint)point;
+        //拦截游客
+        this.extracted(returnObj, RegularReplaceEnum.VIP);
     }
 
     private void requestBodyLog(MethodInvocationProceedingJoinPoint point) {
