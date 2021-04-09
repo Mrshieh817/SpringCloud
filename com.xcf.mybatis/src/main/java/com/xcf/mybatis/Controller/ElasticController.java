@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.introspect.AnnotatedField;
 import com.xcf.mybatis.Core.ElasticUser;
+import com.xcf.mybatis.Core.Elasticjianguanjia;
 import com.xcf.mybatis.Core.Param;
 import com.xcf.mybatis.Service.ElasticService;
 import com.xcf.mybatis.Service.ElasticjianguanjiaService;
@@ -43,7 +46,8 @@ public class ElasticController {
 	@Autowired
 	RedisUtil redisutil;
 	
-	
+	@Autowired
+	private ElasticsearchTemplate elasticsearchTemplate;
 	
 	@Autowired
 	private ElasticService elasticservice;
@@ -65,8 +69,11 @@ public class ElasticController {
 		// 设置查询调减方法
 		BoolQueryBuilder buider = QueryBuilders.boolQuery();
 		// 根据条件查
-		buider.should(QueryBuilders.matchPhraseQuery("defendant", p.getKeyword()));
+		buider.should(QueryBuilders.matchPhraseQuery("cityName", p.getKeyword()));
 		searchSourceBuilder.query(buider);
+		
+		NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
+		//queryBuilder.withIds(ids)
 
 		System.out.println(searchSourceBuilder.toString());
 
@@ -79,6 +86,33 @@ public class ElasticController {
 		System.out.println("用时:" + tt);
 		return page;
 	}
+	
+	@ApiOperation("测试es的读取")
+	@RequestMapping("/test1")
+	public Object test1(@RequestBody Param p) {
+		
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		searchSourceBuilder.trackTotalHits(true);
+		
+		// 设置查询调减方法
+		BoolQueryBuilder buider = QueryBuilders.boolQuery();
+		// 根据条件查
+		buider.should(QueryBuilders.matchPhraseQuery("cityName", p.getKeyword()));
+		searchSourceBuilder.query(buider);
+		
+		NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
+		
+		Pageable pageable = PageRequest.of(0, 400);
+		queryBuilder.withPageable(pageable);
+		
+		queryBuilder.withQuery(searchSourceBuilder.query());
+		System.out.println(searchSourceBuilder.toString());
+
+		Page<Elasticjianguanjia> pagesPage= elasticsearchTemplate.queryForPage(queryBuilder.build(), Elasticjianguanjia.class);
+		
+		return pagesPage;
+	}
+	
 	
 	//测试Field字段属性反射
 	@RequestMapping("/get")
