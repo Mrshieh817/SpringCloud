@@ -124,6 +124,13 @@
 		</dependency>
 
 		<!-- 测试 redssion 延迟队列 结束 -->
+
+
+		<!-- Spring Boot 2.0官方文档之 Actuator -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<!--之前是用来解决@@问题 -->

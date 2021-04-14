@@ -25,12 +25,21 @@ spring:
     type: redis #设置spring的二级缓存为redis
     redis:
       time-to-live: 10000 #统一默认cache缓存时间为一分钟，但是为了防止缓存雪崩，可以在实际缓存的方法上特定设置缓存时间
-  data:
-    elasticsearch:
-      cluster-name: elasticsearch
-      cluster-nodes: 124.71.43.168:9300
-      repositories:
-        enabled: true
+ #es搜索引擎配置
+  elasticsearch:
+    rest:
+      uris: http://124.71.43.168:9200
+#做springboot actuator的监控,暴露所有端口和信息,并且监健康和日志的访问 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"       
+  endpoint:
+    logfile:
+      external-file: ${logging.file.path}${logging.file.name}
+    health:
+      show-details: ALWAYS     
 #mybatis配置    
 mybatis:
   mapper-locations: classpath:mappers/*.xml
@@ -38,9 +47,12 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
     #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl   #这里打印的是mybatis返查询语句及返回数据
-#logging 打印查询sql语句
+#logging 打印查询sql语句，springboot actuator的监控,暴露所有端口和信息,并且监健康和日志的访问 
 logging:
-  level:
+ file:
+   name: test.log
+   path: /data/applogs/
+ level:
    com.xcf.mybatis.Mapper: debug  # 改成你的mapper文件所在包路径
 #test @canshu@
 aite:

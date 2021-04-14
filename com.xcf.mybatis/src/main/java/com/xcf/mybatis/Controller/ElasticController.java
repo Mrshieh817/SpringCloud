@@ -5,8 +5,6 @@ package com.xcf.mybatis.Controller;
 * @Date 创建时间：2021年3月18日 上午11:37:26 
 */
 
-import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Objects;
@@ -18,15 +16,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.fasterxml.jackson.databind.introspect.AnnotatedField;
 import com.xcf.mybatis.Core.ElasticUser;
 import com.xcf.mybatis.Core.Elasticjianguanjia;
 import com.xcf.mybatis.Core.Param;
@@ -37,17 +35,19 @@ import com.xcf.mybatis.aspect.WebLog;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/es")
 @Api(value = "这是ES公共操作中心",tags = {"这是ES公共操作中心"})
+@Slf4j
 public class ElasticController {
 	
 	@Autowired
 	RedisUtil redisutil;
 	
 	@Autowired
-	private ElasticsearchTemplate elasticsearchTemplate;
+	private ElasticsearchRestTemplate elasticsearchTemplate;
 	
 	@Autowired
 	private ElasticService elasticservice;
@@ -108,7 +108,7 @@ public class ElasticController {
 		queryBuilder.withQuery(searchSourceBuilder.query());
 		System.out.println(searchSourceBuilder.toString());
 
-		Page<Elasticjianguanjia> pagesPage= elasticsearchTemplate.queryForPage(queryBuilder.build(), Elasticjianguanjia.class);
+		SearchHits<Elasticjianguanjia> pagesPage= elasticsearchTemplate.search(queryBuilder.build(), Elasticjianguanjia.class);
 		
 		return pagesPage;
 	}
@@ -148,6 +148,7 @@ public class ElasticController {
 	 */
 	@RequestMapping("/redis")
 	public Object redis() {
+		log.info("hahahaaaaaaaaaaaaaaaa~~~~~~~~");
 		redisutil.set("fff", "mr shieh");
 		return "success";
 	}

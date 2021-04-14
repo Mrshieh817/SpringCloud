@@ -1,5 +1,6 @@
 package com.xcf.mybatis.Tool.redis.cache;
 
+import java.text.MessageFormat;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.concurrent.Callable;
@@ -51,6 +52,7 @@ public class TTLRedisCache extends RedisCache {
     public ValueWrapper get(Object key) {
 
         log.debug("命中缓存:{}",key);
+        System.out.println(MessageFormat.format("命中缓存:{0}",key));
         return super.get(key);
     }
 
