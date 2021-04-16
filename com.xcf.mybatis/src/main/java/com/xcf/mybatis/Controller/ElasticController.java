@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,8 +97,16 @@ public class ElasticController {
 		
 		// 设置查询调减方法
 		BoolQueryBuilder buider = QueryBuilders.boolQuery();
+		buider.must(QueryBuilders.boolQuery()
+				.should(
+				  QueryBuilders.boolQuery()
+				.must(QueryBuilders.rangeQuery("crawled_time").lt("2018-01-06T16:00:00.000Z"))
+				.must(QueryBuilders.rangeQuery("crawled_time").gt("2017-01-31T16:00:00.000Z"))
+				));
+		
+		//buider.must(QueryBuilders.rangeQuery("contractMaxDate").lte("2021-04-16 09:20:00")).m;
 		// 根据条件查
-		buider.should(QueryBuilders.matchPhraseQuery("cityName", p.getKeyword()));
+		//buider.should(QueryBuilders.matchPhraseQuery("cityName", p.getKeyword()));
 		searchSourceBuilder.query(buider);
 		
 		NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
