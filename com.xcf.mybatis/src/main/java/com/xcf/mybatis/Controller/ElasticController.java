@@ -97,12 +97,12 @@ public class ElasticController {
 		
 		// 设置查询调减方法
 		BoolQueryBuilder buider = QueryBuilders.boolQuery();
-		buider.must(QueryBuilders.boolQuery()
-				.should(
+		buider.must(QueryBuilders.multiMatchQuery(p.getKeyword(), "regLocation","name","areaCity"));
+		buider.must(
 				  QueryBuilders.boolQuery()
 				.must(QueryBuilders.rangeQuery("crawled_time").lt("2018-01-06T16:00:00.000Z"))
-				.must(QueryBuilders.rangeQuery("crawled_time").gt("2017-01-31T16:00:00.000Z"))
-				));
+				.must(QueryBuilders.rangeQuery("crawled_time").gt("2017-01-01T16:00:00.000Z"))
+				);
 		
 		//buider.must(QueryBuilders.rangeQuery("contractMaxDate").lte("2021-04-16 09:20:00")).m;
 		// 根据条件查
