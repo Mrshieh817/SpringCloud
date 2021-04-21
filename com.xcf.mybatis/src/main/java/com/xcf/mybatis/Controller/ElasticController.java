@@ -6,6 +6,8 @@ package com.xcf.mybatis.Controller;
 */
 
 import java.lang.reflect.Field;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 import java.util.Objects;
 
@@ -13,6 +15,8 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -90,19 +94,21 @@ public class ElasticController {
 	
 	@ApiOperation("测试es的读取")
 	@RequestMapping("/test1")
-	public Object test1(@RequestBody Param p) {
+	public Object test1(@RequestBody Param p) throws ParseException {
 		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		searchSourceBuilder.trackTotalHits(true);
 		
 		// 设置查询调减方法
 		BoolQueryBuilder buider = QueryBuilders.boolQuery();
-		buider.must(QueryBuilders.multiMatchQuery(p.getKeyword(), "regLocation","name","areaCity"));
+		//buider.must(QueryBuilders.multiMatchQuery(p.getKeyword(), "project_name"));
 		buider.must(
 				  QueryBuilders.boolQuery()
-				.must(QueryBuilders.rangeQuery("crawled_time").lt("2018-01-06T16:00:00.000Z"))
-				.must(QueryBuilders.rangeQuery("crawled_time").gt("2017-01-01T16:00:00.000Z"))
+				.must(QueryBuilders.rangeQuery("bid_time").lt(sdf.parse("2021-05-06 16:00:00.000")))
+				.must(QueryBuilders.rangeQuery("bid_time").gt(sdf.parse("2010-01-01 16:00:00.000")))
 				);
+		buider.must(QueryBuilders.boolQuery().must(QueryBuilders.termsQuery("id", ("32607,32606").split(","))));
 		
 		//buider.must(QueryBuilders.rangeQuery("contractMaxDate").lte("2021-04-16 09:20:00")).m;
 		// 根据条件查
@@ -113,7 +119,7 @@ public class ElasticController {
 		
 		Pageable pageable = PageRequest.of(0, 400);
 		queryBuilder.withPageable(pageable);
-		
+		queryBuilder.withSort(SortBuilders.fieldSort("id").order(SortOrder.DESC));
 		queryBuilder.withQuery(searchSourceBuilder.query());
 		System.out.println(searchSourceBuilder.toString());
 
