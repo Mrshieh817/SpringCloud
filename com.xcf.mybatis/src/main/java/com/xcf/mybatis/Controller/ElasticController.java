@@ -102,13 +102,13 @@ public class ElasticController {
 		
 		// 设置查询调减方法
 		BoolQueryBuilder buider = QueryBuilders.boolQuery();
-		//buider.must(QueryBuilders.multiMatchQuery(p.getKeyword(), "project_name"));
-		buider.must(
-				  QueryBuilders.boolQuery()
-				.must(QueryBuilders.rangeQuery("bid_time").lt(sdf.parse("2021-05-06 16:00:00.000")))
-				.must(QueryBuilders.rangeQuery("bid_time").gt(sdf.parse("2010-01-01 16:00:00.000")))
-				);
-		buider.must(QueryBuilders.boolQuery().must(QueryBuilders.termsQuery("id", ("32607,32606").split(","))));
+		buider.must(QueryBuilders.matchPhraseQuery("manager_name", p.getKeyword()));
+		//buider.must(
+				//  QueryBuilders.boolQuery()
+				//.must(QueryBuilders.rangeQuery("bid_time").lt(sdf.parse("2021-05-06 16:00:00.000")))
+				//.must(QueryBuilders.rangeQuery("bid_time").gt(sdf.parse("2010-01-01 16:00:00.000")))
+				//);
+		//buider.must(QueryBuilders.boolQuery().must(QueryBuilders.termsQuery("id", ("14615").split(","))));
 		
 		//buider.must(QueryBuilders.rangeQuery("contractMaxDate").lte("2021-04-16 09:20:00")).m;
 		// 根据条件查
@@ -117,7 +117,7 @@ public class ElasticController {
 		
 		NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
 		
-		Pageable pageable = PageRequest.of(0, 400);
+		Pageable pageable = PageRequest.of(0, 10);
 		queryBuilder.withPageable(pageable);
 		queryBuilder.withSort(SortBuilders.fieldSort("id").order(SortOrder.DESC));
 		queryBuilder.withQuery(searchSourceBuilder.query());
