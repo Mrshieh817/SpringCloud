@@ -102,7 +102,7 @@ public class ElasticController {
 		
 		// 设置查询调减方法
 		BoolQueryBuilder buider = QueryBuilders.boolQuery();
-		buider.must(QueryBuilders.matchPhraseQuery("manager_name", p.getKeyword()));
+		buider.must(QueryBuilders.matchPhraseQuery("engineeringClass", p.getKeyword()));
 		//buider.must(
 				//  QueryBuilders.boolQuery()
 				//.must(QueryBuilders.rangeQuery("bid_time").lt(sdf.parse("2021-05-06 16:00:00.000")))

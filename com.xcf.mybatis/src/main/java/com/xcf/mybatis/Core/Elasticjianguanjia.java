@@ -17,7 +17,7 @@ import lombok.Data;
  * @Date 创建时间：2021年3月22日 上午11:34:50
  */
 @Data
-@Document(indexName = "ik_project_winning_page", type = "_doc", useServerConfiguration = true, createIndex = false)
+@Document(indexName = "ik_project_achievement_water_supervise_page", type = "_doc", useServerConfiguration = true, createIndex = false)
 public class Elasticjianguanjia {
 
 	@Id
@@ -31,6 +31,9 @@ public class Elasticjianguanjia {
 
 	@Field(type = FieldType.Float)
 	private String bidPrice;
+	
+	@Field(type = FieldType.Text)
+	private String engineeringClass;
 
 	@Field(type = FieldType.Text)
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
