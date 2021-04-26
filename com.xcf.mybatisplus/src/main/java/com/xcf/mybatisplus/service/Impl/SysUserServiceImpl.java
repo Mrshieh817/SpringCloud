@@ -9,13 +9,14 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xcf.mybatisplus.mapper.SysUserMapper;
 import com.xcf.mybatisplus.model.SysUser;
+import com.xcf.mybatisplus.model.input.SysUserParam;
 import com.xcf.mybatisplus.service.SysUserService;
 
 /** 
 * @author xcf 
 * @Date 创建时间：2021年4月25日 下午2:39:00 
 */
-@Service(value = "SysUserServiceMY")
+@Service(value = "UserService")
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService{
 	
 	@Autowired
@@ -23,10 +24,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	
 	
 	@Override
-	public List<SysUser> getUser(SysUser model){
+	public List<SysUser> getUser(SysUserParam model){
 		List<SysUser> list=null;
 		try {
-			list= usermapper.getUser(model);
+			list= usermapper.getUser(model.buildMBPPage(),model);
 		} catch (Exception e) {
 			// TODO: handle exception
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

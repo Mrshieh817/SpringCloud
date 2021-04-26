@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xcf.mybatisplus.model.SysUser;
+import com.xcf.mybatisplus.model.input.SysUserParam;
 
 /** 
 * @author xcf 
@@ -15,5 +16,5 @@ public interface SysUserService extends IService<SysUser> {
 	 * @param model
 	 * @return
 	 */
-	List<SysUser> getUser(SysUser model);
+	List<SysUser> getUser(SysUserParam model);
 }

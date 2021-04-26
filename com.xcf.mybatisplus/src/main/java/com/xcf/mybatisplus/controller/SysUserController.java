@@ -1,5 +1,6 @@
 package com.xcf.mybatisplus.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xcf.mybatisplus.model.SysUser;
 import com.xcf.mybatisplus.model.Vo.KResponse;
+import com.xcf.mybatisplus.model.input.SysUserParam;
 import com.xcf.mybatisplus.service.SysUserService;
 
 /** 
@@ -24,7 +26,7 @@ import com.xcf.mybatisplus.service.SysUserService;
 public class SysUserController {
 	
 	@Autowired
-	@Qualifier("SysUserServiceMY")
+	@Qualifier("UserService")
 	private SysUserService userService;
 	
 	
@@ -34,15 +36,30 @@ public class SysUserController {
 	 */
 	@RequestMapping("/getSysUserList")
 	public KResponse<Page<SysUser>>  getSysUserList() {
-		Page<SysUser> pagesPage=new Page<SysUser>(1,2);
-		LambdaQueryWrapper<SysUser> queryWrapper=new LambdaQueryWrapper<SysUser>().gt(SysUser::getId, 0);
+		Page<SysUser> pagesPage=new Page<SysUser>(1,10);
+		LambdaQueryWrapper<SysUser> queryWrapper=new LambdaQueryWrapper<SysUser>().isNotNull(SysUser::getId);
 		Page<SysUser> listIPage=userService.getBaseMapper().selectPage(pagesPage, queryWrapper);
 		return KResponse.data(listIPage);
 	}
 	
+	/**
+	 * 根据XML配置获取数据
+	 * @param body
+	 * @return
+	 */
 	@RequestMapping("/getUserXml")
-	public  KResponse<List<SysUser>>  getUserXml(@RequestBody @Validated SysUser body){
+	public  KResponse<List<SysUser>>  getUserXml(@RequestBody @Validated SysUserParam body){
 		return KResponse.data(userService.getUser(body));
+	}
+	
+	@RequestMapping("/autoAdd")
+	public KResponse<SysUser> autoAdd(){
+		SysUser addSysUser=new SysUser();
+		addSysUser.setName("my auto add");
+		addSysUser.setPass("10000");
+		addSysUser.setUpdateTime(new Date());
+		boolean bo= userService.save(addSysUser);
+		return bo==true? KResponse.success():KResponse.failed();
 	}
 
 }
