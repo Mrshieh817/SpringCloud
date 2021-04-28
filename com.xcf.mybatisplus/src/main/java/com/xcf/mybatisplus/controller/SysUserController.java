@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,12 +55,20 @@ public class SysUserController {
 	}
 	
 	@RequestMapping("/autoAdd")
+	@Transactional
 	public KResponse<SysUser> autoAdd(){
-		SysUser addSysUser=new SysUser();
-		addSysUser.setName("my auto add");
-		addSysUser.setPass("10000");
-		addSysUser.setUpdateTime(new Date());
-		boolean bo= userService.save(addSysUser);
+		boolean bo=true;
+		
+		try {
+			SysUser addSysUser=new SysUser();
+			addSysUser.setName("my auto add");
+			addSysUser.setPass("10000");
+			addSysUser.setUpdateTime(new Date());
+			 bo= userService.save(addSysUser);
+		} catch (Exception e) {
+			// TODO: handle exception
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+		}
 		return bo==true? KResponse.success():KResponse.failed();
 	}
 
