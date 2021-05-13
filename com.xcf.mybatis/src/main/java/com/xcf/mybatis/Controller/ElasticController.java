@@ -8,6 +8,9 @@ package com.xcf.mybatis.Controller;
 import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -166,6 +169,17 @@ public class ElasticController {
 		log.info("hahahaaaaaaaaaaaaaaaa~~~~~~~~");
 		redisutil.set("fff", "mr shieh");
 		return "success";
+	}
+	
+	@RequestMapping("/testarry")
+	public String testarry() {
+		List<String> list=new ArrayList<>();
+		
+		 String er="a,b,c,d";
+		Arrays.stream(er.split(",")).forEach((action)->{
+			list.add(action);
+		});
+		return list.toString();
 	}
 
 }
