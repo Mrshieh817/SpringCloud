@@ -180,12 +180,13 @@ public class ElasticController {
 				String realykeyString="set"+entry.getKey().substring(0,1).toUpperCase()+entry.getKey().substring(1)+"realy";
 				//获取当前循环体的值
 				String vaString=entry.getValue().get(0);
-				
+				//调用jianmo对象的方法
 				Method method=jianmo.getClass().getMethod(keyString, String.class);
-				
+				//调用jianmo对象的方法
 				Method realymethod=jianmo.getClass().getMethod(realykeyString, String.class);
-				
+				//执行jianmo对象的方法
 				realymethod.invoke(jianmo, vaString.replace("<span style='color:red'>", "").replace("</span>", ""));
+				//调用jianmo对象的方法
 				method.invoke(jianmo, vaString);
 				
 			}
