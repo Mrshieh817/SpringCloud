@@ -25,6 +25,9 @@ public class Elasticjianguanjia {
 	
 	@Field(type = FieldType.Keyword)
 	private String projectName;
+	
+	
+	private String projectNamerealy;
 
 	@Field(type = FieldType.Keyword)
 	private String managerName;

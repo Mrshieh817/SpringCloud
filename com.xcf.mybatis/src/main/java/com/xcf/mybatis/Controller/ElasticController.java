@@ -6,18 +6,23 @@ package com.xcf.mybatis.Controller;
 */
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
+import java.util.stream.Collectors;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +33,7 @@ import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +47,7 @@ import com.xcf.mybatis.Service.ElasticjianguanjiaService;
 import com.xcf.mybatis.Tool.redis.RedisUtil;
 import com.xcf.mybatis.aspect.WebLog;
 
+import cn.hutool.core.collection.CollUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -97,7 +104,7 @@ public class ElasticController {
 	
 	@ApiOperation("测试es的读取")
 	@RequestMapping("/test1")
-	public Object test1(@RequestBody Param p) throws ParseException {
+	public Object test1(@RequestBody Param p) throws ParseException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchFieldException {
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
@@ -105,7 +112,7 @@ public class ElasticController {
 		
 		// 设置查询调减方法
 		BoolQueryBuilder buider = QueryBuilders.boolQuery();
-		buider.must(QueryBuilders.matchPhraseQuery("engineeringClass", p.getKeyword()));
+		buider.must(QueryBuilders.matchQuery("projectName", p.getKeyword()));
 		//buider.must(
 				//  QueryBuilders.boolQuery()
 				//.must(QueryBuilders.rangeQuery("bid_time").lt(sdf.parse("2021-05-06 16:00:00.000")))
@@ -124,22 +131,78 @@ public class ElasticController {
 		queryBuilder.withPageable(pageable);
 		queryBuilder.withSort(SortBuilders.fieldSort("id").order(SortOrder.DESC));
 		queryBuilder.withQuery(searchSourceBuilder.query());
+		
+		 //高亮
+        HighlightBuilder highlightBuilder = new HighlightBuilder();
+        //设置高亮字段
+        highlightBuilder.field("projectName");
+        //如果要多个字段高亮,这项要为false
+        highlightBuilder.requireFieldMatch(true);
+        highlightBuilder.preTags("<span style='color:red'>");
+        highlightBuilder.postTags("</span>");
+      //下面这两项,如果你要高亮如文字内容等有很多字的字段,必须配置,不然会导致高亮不全,文章内容缺失等   
+      	highlightBuilder.fragmentSize(800000); //最大高亮分片数
+        highlightBuilder.numOfFragments(0); //从第一个分片获取高亮片段
+        
+
+        queryBuilder.withHighlightBuilder(highlightBuilder);
 		System.out.println(searchSourceBuilder.toString());
 
-		SearchHits<Elasticjianguanjia> pagesPage= elasticsearchTemplate.search(queryBuilder.build(), Elasticjianguanjia.class);
 		
-		return pagesPage;
+		//调用公共方法
+	    List<Elasticjianguanjia>	list= commomPage(queryBuilder.build(),Elasticjianguanjia.class);
+		
+	
+		return list;
 	}
 	
+	
+	private <T> List<T> commomPage(Query query, Class<T> clazz) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchFieldException, SecurityException, NoSuchMethodException{
+		//查询ES
+		SearchHits<T> pagesPage= elasticsearchTemplate.search(query, clazz);
+		//转换es的结果为自己写想要的数据类型
+		List<T> list=pagesPage.stream().map(org.springframework.data.elasticsearch.core.SearchHit::getContent).collect(Collectors.toList());
+		//获取es返回设置的高亮数据字段
+		List<Map<String, List<String>>> heightlist=pagesPage.stream().map(org.springframework.data.elasticsearch.core.SearchHit::getHighlightFields).collect(Collectors.toList());
+		//循环es返回的主要数据
+		for (int i = 0; i < list.size(); i++) {
+			//获取list集合里面单个对象的信息
+			T jianmo=list.get(i);
+			//获取高亮查询结果的单个对象信息
+			Map<String, List<String>> hmpMap=heightlist.get(i);
+			if (CollUtil.isEmpty(hmpMap)) {
+				continue;
+			}
+			for(Map.Entry<String, List<String>> entry : hmpMap.entrySet()) {
+				//拼接高亮对象字符信息,用于对es主体返回的信息进行更改
+				String keyString="set"+entry.getKey().substring(0,1).toUpperCase()+entry.getKey().substring(1);
+				//拼接高亮对象字符信息,用于对es主体返回的信息进行更改
+				String realykeyString="set"+entry.getKey().substring(0,1).toUpperCase()+entry.getKey().substring(1)+"realy";
+				//获取当前循环体的值
+				String vaString=entry.getValue().get(0);
+				
+				Method method=jianmo.getClass().getMethod(keyString, String.class);
+				
+				Method realymethod=jianmo.getClass().getMethod(realykeyString, String.class);
+				
+				realymethod.invoke(jianmo, vaString.replace("<span style='color:red'>", "").replace("</span>", ""));
+				method.invoke(jianmo, vaString);
+				
+			}
+		}
+		
+		return list;
+	}
 	
 	//测试Field字段属性反射
 	@RequestMapping("/get")
 	@ApiOperation("测试Field字段属性反射")
-	public void get(@RequestParam(value = "name",defaultValue = "baba")String name ) throws IllegalArgumentException, IllegalAccessException {
+	public void get(@RequestParam(value = "name",defaultValue = "baba")String name ) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
 		 //实体类 信息
 		 ElasticUser model=new ElasticUser(10,name,"重庆","90") ;
 		 //拿取被反射对象的基本信息，如字段注解，字段名称和它的值
 		 Field[] fields=model.getClass().getDeclaredFields();  
+
 		 for (int i = 0; i < fields.length; i++) {
 			 //setAccessible的作用是将类中的成员变量private变成可访问变量,然后获取里面value,故必须进行此操
 			 fields[i].setAccessible(true);
@@ -147,6 +210,16 @@ public class ElasticController {
 			 WebLog annotatedFields= fields[i].getDeclaredAnnotation(WebLog.class);
 			 String description="";
 			 String valueString="";
+			 
+			 //获取当前没反射字段的类型
+			 Class typeClass= fields[i].getType();
+			 //拼接被执行实体某个字段的set属性值,然后赋值给方法，进行更改
+			 String nameString="set"+fields[i].getName().substring(0, 1).toUpperCase()+fields[i].getName().substring(1);
+			 Object vvvvString=fields[i].get(model);
+			 //获取当前实体某个值的set方法
+			 Method mtMethod1=model.getClass().getMethod(nameString, typeClass);
+			 //执行方法,进行赋值
+			 mtMethod1.invoke(model,typeClass==Integer.class?11111:vvvvString+"我是文本被更该了后补加的");
 			 //判断当前对象是否有自定义注解
 			 if (Objects.nonNull(annotatedFields)) {
 				 //获取注解上的信息
