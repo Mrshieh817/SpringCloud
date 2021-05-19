@@ -6,8 +6,10 @@ package com.xcf.mybatis.Controller;
 */
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,6 +47,7 @@ import com.xcf.mybatis.Core.Param;
 import com.xcf.mybatis.Service.ElasticService;
 import com.xcf.mybatis.Service.ElasticjianguanjiaService;
 import com.xcf.mybatis.Tool.redis.RedisUtil;
+import com.xcf.mybatis.aspect.AccessLimit;
 import com.xcf.mybatis.aspect.WebLog;
 
 import cn.hutool.core.collection.CollUtil;
@@ -198,7 +201,7 @@ public class ElasticController {
 	//测试Field字段属性反射
 	@RequestMapping("/get")
 	@ApiOperation("测试Field字段属性反射")
-	public void get(@RequestParam(value = "name",defaultValue = "baba")String name ) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
+	public void get(@RequestParam(value = "name",defaultValue = "baba")String name ) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException, NoSuchFieldException {
 		 //实体类 信息
 		 ElasticUser model=new ElasticUser(10,name,"重庆","90") ;
 		 //拿取被反射对象的基本信息，如字段注解，字段名称和它的值
@@ -223,7 +226,14 @@ public class ElasticController {
 			 mtMethod1.invoke(model,typeClass==Integer.class?11111:vvvvString+"我是文本被更该了后补加的");
 			 //判断当前对象是否有自定义注解
 			 if (Objects.nonNull(annotatedFields)) {
-				 //获取注解上的信息
+				 //获取注解上的信息,通过代理的方式更改注解信息
+				 InvocationHandler h = Proxy.getInvocationHandler(annotatedFields);
+				 Field fileddescription= h.getClass().getDeclaredField("memberValues");
+				  fileddescription.setAccessible(true);
+				  Map memberValues = null;
+				  memberValues = (Map) fileddescription.get(h);
+				  memberValues.put("description", "我把你的description统一改了");
+				  //获取注解的信息
 				  description= annotatedFields.description();
 				  valueString=annotatedFields.value();
 			 }
@@ -246,7 +256,8 @@ public class ElasticController {
 	}
 	
 	@RequestMapping("/testarry")
-	public String testarry() {
+	@AccessLimit(limit = 5,sec = 5,disEl = "#root[p].keyword")
+	public String testarry(@RequestBody Param p) {
 		List<String> list=new ArrayList<>();
 		
 		 String er="a,b,c,d";
