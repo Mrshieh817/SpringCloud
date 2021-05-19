@@ -1,5 +1,6 @@
 package com.xcf.mybatis.aspect;
 
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -64,6 +65,16 @@ public class AccessLimitAspect {
 		try {
 			log.info(">>>>>>>>>AccessLimit参数限制次数{}>>>>多少时间内{}",accesslimit.limit(),accesslimit.sec());
 			
+			//1.一种方式获取方法或者对象上面的注解
+			Class<?> targetCls=JoinPoint.getTarget().getClass();
+	         //获取方法签名(通过此签名获取目标方法信息)
+	         MethodSignature ms=(MethodSignature)JoinPoint.getSignature();
+	         //获取目标方法上的注解指定的操作名称
+	         Method targetMethod=targetCls.getDeclaredMethod(ms.getName(),ms.getParameterTypes());
+	         AccessLimit requiredLog=targetMethod.getAnnotation(AccessLimit.class);
+	         String operation=requiredLog.disEl();
+			
+			//2.直接获取
 			int limit = accesslimit.limit();
             int sec = accesslimit.sec();
             String disEl=accesslimit.disEl();
