@@ -121,13 +121,18 @@ public class UserController {
 	@RequestMapping("/testel")
 	public void testel() {
 		 //测试SpringEL解析器
-       // String template = "#{#user}，早上好";//设置文字模板,其中#{}表示表达式的起止，#user是表达式字符串，表示引用一个变量。
-        String template = "#ff";//设置文字模板,其中#{}表示表达式的起止，#user是表达式字符串，表示引用一个变量。
+		//设置文字模板,其中#{}表示表达式的起止，#user是表达式字符串，表示引用一个变量。
+       // String template = "#{#user}，早上好";
+		//设置一个取值模板，root是需要获取根部的数据,必须加,[ff]代表map数组的key名字,到时候用这个来匹配数组ff，并且拿到他的值SysUser对象,所以#root[ff].name，这个.name实际上就是获取了数组值对象.name然后拿到它的值
+        String template = "#root[ff].name";
         ExpressionParser paser = new SpelExpressionParser();//创建表达式解析器
-
+         SysUser ff=new SysUser();
+         ff.setName("caonim");
         //通过evaluationContext.setVariable可以在上下文中设定变量。
-        EvaluationContext context = new StandardEvaluationContext();
-        context.setVariable("ff","黎明");
+        Map<String, Object> map=new HashMap<String, Object>();
+        map.put("ff", ff);
+        EvaluationContext context = new StandardEvaluationContext(map);
+        //context.setVariable("ff","黎明");
 
         //解析表达式，如果表达式是一个模板表达式，需要为解析传入模板解析器上下文。
        // Expression expression = paser.parseExpression(template,new TemplateParserContext());
