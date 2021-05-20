@@ -27,7 +27,9 @@ public class Elasticjianguanjia {
 	private String projectName;
 	
 	
-	private String projectNamerealy;
+	private String getProjectNamerealy(){
+		return projectName.replace("<span style='color:red'>", "").replace("</span>", "");
+	}; 
 
 	@Field(type = FieldType.Keyword)
 	private String managerName;

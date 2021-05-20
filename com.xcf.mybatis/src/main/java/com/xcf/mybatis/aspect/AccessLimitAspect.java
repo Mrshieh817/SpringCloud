@@ -78,6 +78,7 @@ public class AccessLimitAspect {
 			int limit = accesslimit.limit();
             int sec = accesslimit.sec();
             String disEl=accesslimit.disEl();
+            //获取注解该方法传入的参数信息
             MethodSignature signature = (MethodSignature) JoinPoint.getSignature();
             String[] parameterNames = signature.getParameterNames();
             Object[] parameterArgs = JoinPoint.getArgs();
