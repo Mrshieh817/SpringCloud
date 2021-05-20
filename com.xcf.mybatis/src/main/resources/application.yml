@@ -27,8 +27,12 @@ spring:
       time-to-live: 10000 #统一默认cache缓存时间为一分钟，但是为了防止缓存雪崩，可以在实际缓存的方法上特定设置缓存时间
  #es搜索引擎配置
   elasticsearch:
-    rest:
-      uris: http://124.71.43.168:9200
+    restconfig:
+      #uris: 124.71.43.168:9200
+      uris: 122.9.116.201:9200
+      username: admin
+      password: B1#r@olSv0NELoU51syULC&4Uwhsi^
+      ssl: true
 #做springboot actuator的监控,暴露所有端口和信息,并且监健康和日志的访问 
 management:
   endpoints:
