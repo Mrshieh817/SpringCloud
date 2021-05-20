@@ -137,9 +137,13 @@ public class UserController {
         //解析表达式，如果表达式是一个模板表达式，需要为解析传入模板解析器上下文。
        // Expression expression = paser.parseExpression(template,new TemplateParserContext());
         Expression expression = paser.parseExpression(template);
-
+        
+        //bool类型获取及EL的T(type)表达式
+        ExpressionParser boolpaser = new SpelExpressionParser();//创建表达式解析器
+        boolean boolff=  boolpaser.parseExpression("T(Boolean).TRUE").getValue(Boolean.class);
+         System.out.println("EL表达式Bool类型:"+boolff);
         //使用Expression.getValue()获取表达式的值，这里传入了Evalution上下文，第二个参数是类型参数，表示返回值的类型。
-        System.out.println(expression.getValue(context,String.class));
+        System.out.println("EL表达式获取参数匹配信息:"+expression.getValue(context,String.class));
 	}
 	
 
