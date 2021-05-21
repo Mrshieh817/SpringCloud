@@ -17,4 +17,6 @@ public interface SysUserService extends IService<SysUser> {
 	 * @return
 	 */
 	List<SysUser> getUser(SysUserParam model);
+	
+	Integer getCallproduce();
 }

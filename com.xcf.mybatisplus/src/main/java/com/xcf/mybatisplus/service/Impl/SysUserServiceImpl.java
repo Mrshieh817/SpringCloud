@@ -35,5 +35,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		
 		return list;
 	}
+	
+	@Override
+	public Integer getCallproduce() {
+		return usermapper.getCallproduce();
+	}
 
 }

@@ -15,4 +15,8 @@
 	  and id=#{params.id}
 	</if>
 	</select>
+	
+	<select id="getCallproduce" resultType="int">
+	    call Callproduce
+	</select>
 </mapper>

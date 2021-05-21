@@ -20,4 +20,10 @@ public interface SysUserMapper extends BaseMapper<SysUser>{
 	 * @return
 	 */
 	List<SysUser> getUser(Page<?> pa, @Param("params") SysUserParam model);
+	
+	/**
+	 * 调用存储过程
+	 * @return
+	 */
+	Integer getCallproduce();
 }

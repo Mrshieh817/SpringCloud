@@ -72,4 +72,13 @@ public class SysUserController {
 		return bo==true? KResponse.success():KResponse.failed();
 	}
 
+	/**
+	 * 执行存储过程(获取条数)
+	 * @return
+	 */
+	@RequestMapping("/callproduce")
+	public KResponse<Integer> getCallproduce(){
+		return KResponse.data(userService.getCallproduce());
+		
+	}
 }
