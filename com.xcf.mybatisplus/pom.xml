@@ -8,7 +8,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>com.xcf.mybatisplus</artifactId>
-	<name>mybatisplus</name>
+	<name>com.xcf.mybatisplus</name>
 	<description>com.xcf.mybatisplus</description>
 
 	<dependencies>
@@ -70,6 +70,31 @@
 			<artifactId>hutool-all</artifactId>
 			<version>5.1.4</version>
 		</dependency>
+		<!-- myBatis-plus 多数据源配置 -->
+		<dependency>
+			<groupId>com.baomidou</groupId>
+			<artifactId>dynamic-datasource-spring-boot-starter</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+
+		<!--region swagger knife4j-->
+		<dependency>
+			<groupId>com.github.xiaoymin</groupId>
+			<artifactId>knife4j-spring-boot-starter</artifactId>
+			<!--在引用时请在maven中央仓库搜索最新版本号 -->
+			<version>2.0.8</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.xiaoymin</groupId>
+			<artifactId>knife4j-spring-ui</artifactId>
+			<version>2.0.8</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>29.0-jre</version>
+		</dependency>
+		<!--end swagger -->
 	</dependencies>
 	<build>
 		<plugins>
