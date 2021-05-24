@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -203,7 +205,7 @@ public class ElasticController {
 	@ApiOperation("测试Field字段属性反射")
 	public void get(@RequestParam(value = "name",defaultValue = "baba")String name ) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException, NoSuchFieldException {
 		 //实体类 信息
-		 ElasticUser model=new ElasticUser(10,name,"重庆","90") ;
+		 ElasticUser model=new ElasticUser(10,"","重庆","90") ;
 		 //拿取被反射对象的基本信息，如字段注解，字段名称和它的值
 		 Field[] fields=model.getClass().getDeclaredFields();  
 
@@ -220,10 +222,12 @@ public class ElasticController {
 			 //拼接被执行实体某个字段的set属性值,然后赋值给方法，进行更改
 			 String nameString="set"+fields[i].getName().substring(0, 1).toUpperCase()+fields[i].getName().substring(1);
 			 Object vvvvString=fields[i].get(model);
-			 //获取当前实体某个值的set方法
-			 Method mtMethod1=model.getClass().getMethod(nameString, typeClass);
-			 //执行方法,进行赋值
-			 mtMethod1.invoke(model,typeClass==Integer.class?11111:vvvvString+"我是文本被更该了后补加的");
+			 if (ObjectUtils.isEmpty(vvvvString)) {
+				//获取当前实体某个值的set方法
+				 Method mtMethod1=model.getClass().getMethod(nameString, typeClass);
+				 //执行方法,进行赋值
+				 mtMethod1.invoke(model,typeClass==Integer.class?11111:vvvvString+"我是文本被更该了后补加的(值为空)");
+			}
 			 //判断当前对象是否有自定义注解
 			 if (Objects.nonNull(annotatedFields)) {
 				 //获取注解上的信息,通过代理的方式更改注解信息
