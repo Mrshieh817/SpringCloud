@@ -8,6 +8,7 @@ import com.xcf.mybatis.Annotation.JsonRegularReplace;
 import com.xcf.mybatis.Annotation.RegularReplaceEnum;
 
 import lombok.Data;
+import lombok.ToString;
 
 /**
 * @author 作者:大飞
@@ -15,6 +16,7 @@ import lombok.Data;
 * 类说明
 */
 @Data
+@ToString
 public class SysUser implements Serializable {
 	/**
 	 * 

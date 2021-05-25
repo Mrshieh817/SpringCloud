@@ -1,8 +1,10 @@
 package com.xcf.mybatis.Controller;
 
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +27,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.xcf.mybatis.Core.SysUser;
 import com.xcf.mybatis.Core.Delay.DelayJob;
 import com.xcf.mybatis.Service.Delay.DelayJobService;
@@ -163,9 +167,41 @@ public class UserController {
 	@RequestMapping("/testautoId")
 	@ResponseBody
 	public Object testautoId() {
-		String fyString="a,b,c,d,e,f,g";
-		StringDiyUtils.checkStrByNull(fyString.split(","));
+		
+		
+		SysUser  core=new SysUser();
+		core.setId(1008611);
+		core.setName("中国移动");
+		core.setPass("123456");
+		core.setTel("10086");
+		//1.把实体信息添加到JSon对象
+		JSONObject jsonObject=new JSONObject();
+		jsonObject.put("person", core);
+		System.out.println("添加S也是User对象到JSON:"+jsonObject);
+		//2.解析JSON里面的信息,然后转换成SysUser对象
+		SysUser modelSysUser=(SysUser)jsonObject.get("person");
+		System.out.println("获取SysUser对象:"+modelSysUser.toString());
+		//3.把List集合添加到Json集合
+		JSONArray arry=new JSONArray(AddIncrement(core));
+		System.err.println("添加JSON集合:"+arry);
+		//4.获取JSON集合里面的对象
+		SysUser arryobject= arry.getObject(0, SysUser.class);
+		System.out.println("获取JSON集合里面的信息:"+arryobject);
+		//String fyString="a,b,c,d,e,f,g";
+		//StringDiyUtils.checkStrByNull(fyString.split(","));
 		return StringDiyUtils.getOrderCode("FF", 6);
+	}
+	
+	/**
+	 * 集合公共添加方法
+	 * @param <T>
+	 * @param t
+	 * @return
+	 */
+	private static <T> List<T> AddIncrement(T t){
+		List<T> L=new ArrayList<T>();
+		L.add(t);
+		return L;
 	}
 	
 
