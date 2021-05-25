@@ -163,6 +163,8 @@ public class UserController {
 	@RequestMapping("/testautoId")
 	@ResponseBody
 	public Object testautoId() {
+		String fyString="a,b,c,d,e,f,g";
+		StringDiyUtils.checkStrByNull(fyString.split(","));
 		return StringDiyUtils.getOrderCode("FF", 6);
 	}
 	

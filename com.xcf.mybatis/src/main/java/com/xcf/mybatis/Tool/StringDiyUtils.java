@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -50,6 +51,9 @@ public class StringDiyUtils {
 	     * @return false: 不存在  true: 存在
 	     */
 	    public static Boolean checkStrByNull(String... strings) {
+	    	Arrays.stream(strings).forEach(action->{
+	    		System.out.println("action:"+action);
+	    	});
 	        for (String str : strings) {
 	            if(StringUtils.isEmpty(str)){
 	                return true;
