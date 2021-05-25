@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.xcf.mybatis.Core.SysUser;
 import com.xcf.mybatis.Core.Delay.DelayJob;
 import com.xcf.mybatis.Service.Delay.DelayJobService;
+import com.xcf.mybatis.Tool.StringDiyUtils;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -157,6 +158,12 @@ public class UserController {
 		Date deDate=new Date(date.getTime()-(30*60*1000));
 		return deDate.toString();
 		
+	}
+	
+	@RequestMapping("/testautoId")
+	@ResponseBody
+	public Object testautoId() {
+		return StringDiyUtils.getOrderCode("FF", 6);
 	}
 	
 
