@@ -164,20 +164,26 @@ public class UserController {
 		
 	}
 	
+	
+	/**
+	 * 测试随机且自定义订单数
+	 * @return
+	 */
 	@RequestMapping("/testautoId")
 	@ResponseBody
 	public Object testautoId() {
-		
-		
+		StringBuilder builder=new StringBuilder();
+		String NUMBERS = "0123456789";
+		Random random=new Random();
 		SysUser  core=new SysUser();
 		core.setId(1008611);
 		core.setName("中国移动");
-		core.setPass("123456");
-		core.setTel("10086");
+		core.setPass(builder.append(NUMBERS.charAt(random.nextInt(8))).toString());
+		core.setTel(random.nextInt(1000000000)+"");
 		//1.把实体信息添加到JSon对象
 		JSONObject jsonObject=new JSONObject();
 		jsonObject.put("person", core);
-		System.out.println("添加S也是User对象到JSON:"+jsonObject);
+		System.out.println("添加SySUser对象到JSON:"+jsonObject);
 		//2.解析JSON里面的信息,然后转换成SysUser对象
 		SysUser modelSysUser=(SysUser)jsonObject.get("person");
 		System.out.println("获取SysUser对象:"+modelSysUser.toString());
@@ -189,7 +195,7 @@ public class UserController {
 		System.out.println("获取JSON集合里面的信息:"+arryobject);
 		//String fyString="a,b,c,d,e,f,g";
 		//StringDiyUtils.checkStrByNull(fyString.split(","));
-		return StringDiyUtils.getOrderCode("FF", 6);
+		return StringDiyUtils.getOrderCode("XS", 6);
 	}
 	
 	/**
