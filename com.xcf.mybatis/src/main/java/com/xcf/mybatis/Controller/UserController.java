@@ -146,5 +146,18 @@ public class UserController {
         System.out.println("EL表达式获取参数匹配信息:"+expression.getValue(context,String.class));
 	}
 	
+	/**
+	 * 测试时间计算
+	 * @return
+	 */
+	@RequestMapping({"/testtime"})
+	@ResponseBody
+	public Object testtime() {
+		Date date=new Date();
+		Date deDate=new Date(date.getTime()-(30*60*1000));
+		return deDate.toString();
+		
+	}
+	
 
 }
