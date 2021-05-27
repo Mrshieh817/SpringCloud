@@ -12,4 +12,5 @@ import com.xcf.mybatis.Core.SysUser;
 public interface SysuserService {
 	List<SysUser> Getuserlist(SysUser model);
 	List<SysUser> getuserinfobyid(Integer id);
+	int deleteSysUserById(String id);
 }

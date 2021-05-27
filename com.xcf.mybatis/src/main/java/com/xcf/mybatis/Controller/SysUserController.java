@@ -63,4 +63,9 @@ public class SysUserController {
 	public Object getinfo(@RequestParam(name="id",defaultValue="0") Integer id){
 		return sysuserService.getuserinfobyid(id);
 	}
+	
+	@RequestMapping("/de/{id}")
+	public Object de(@PathVariable("id")String id) {
+		return sysuserService.deleteSysUserById(id);
+	}
 }

@@ -21,4 +21,6 @@ public interface SysUserMapper extends Mapper<SysUser> {
 	 * @return
 	 */
   List<SysUser> getuserinfobyid(@Param("id") Integer id);
+  
+  int deleteSysUserById(@Param("id")String id);
 }

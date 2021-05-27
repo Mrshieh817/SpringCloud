@@ -39,4 +39,9 @@ public class SysuserServiceimpl implements SysuserService {
 	public List<SysUser> getuserinfobyid(Integer id){
 		return usermapper.getuserinfobyid(id);
 	}
+	
+	@Override
+	public int deleteSysUserById(String id) {
+		return usermapper.deleteSysUserById(id);
+	}
 }
