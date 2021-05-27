@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.redisson.api.RBlockingQueue;
 import org.redisson.api.RDelayedQueue;
 import org.redisson.api.RedissonClient;
@@ -32,6 +34,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.xcf.mybatis.Core.SysUser;
 import com.xcf.mybatis.Core.Delay.DelayJob;
 import com.xcf.mybatis.Service.Delay.DelayJobService;
+import com.xcf.mybatis.Tool.IPUtils;
 import com.xcf.mybatis.Tool.StringDiyUtils;
 
 import io.swagger.annotations.Api;
@@ -208,6 +211,20 @@ public class UserController {
 		List<T> L=new ArrayList<T>();
 		L.add(t);
 		return L;
+	}
+	
+	
+	/**
+	 * 获取IP
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/getip")
+	@ResponseBody
+	public String getip(HttpServletRequest request) {
+		String ipString=IPUtils.getIpAddr(request);
+		System.out.println(ipString);
+		return ipString;
 	}
 	
 
