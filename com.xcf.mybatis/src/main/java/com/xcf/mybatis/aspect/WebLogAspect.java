@@ -1,7 +1,11 @@
 package com.xcf.mybatis.aspect;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,8 +54,20 @@ public class WebLogAspect {
 		log.info(">>>>>>>>>>Around");
 		log.info("环绕通知的目标方法名：" + JoinPoint.getSignature().getName());
 		try {
-			log.info(">>>>>>>>>webLog参数{}，{}，{}",webLog.params(),webLog.value(),webLog.description());
-			Object obj = JoinPoint.proceed();
+			log.info(">>>>>>>>>webLog参数{}，{}，{}", webLog.params(), webLog.value(), webLog.description());
+
+			// 1.第一种方式获取WebLog注解的信息
+			MethodSignature ms = (MethodSignature) JoinPoint.getSignature();
+			WebLog llLog = ms.getMethod().getAnnotation(WebLog.class);
+			System.out.println("这是原来的:"+llLog.value() + "=====" + llLog.description() + "========="+llLog.params()[0]);
+			// 2.尝试修改注解的原数据,变成自己想要的信息
+			 InvocationHandler h = Proxy.getInvocationHandler(llLog);
+			 Field fileddescription= h.getClass().getDeclaredField("memberValues");
+			 fileddescription.setAccessible(true);
+			 Map hpMap=(Map)fileddescription.get(h);
+			 hpMap.put("description", "我把你description改了哈");
+			 System.out.println("这是修改后的:"+webLog.params()[0]+"======" +webLog.value()+"============"+ webLog.description());
+			 Object obj = JoinPoint.proceed();
 			return obj;
 		} catch (Throwable throwable) {
 			throwable.printStackTrace();

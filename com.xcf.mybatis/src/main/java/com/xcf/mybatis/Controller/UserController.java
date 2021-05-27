@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -36,6 +38,7 @@ import com.xcf.mybatis.Core.Delay.DelayJob;
 import com.xcf.mybatis.Service.Delay.DelayJobService;
 import com.xcf.mybatis.Tool.IPUtils;
 import com.xcf.mybatis.Tool.StringDiyUtils;
+import com.xcf.mybatis.aspect.WebLog;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -219,10 +222,12 @@ public class UserController {
 	 * @param request
 	 * @return
 	 */
+	@WebLog(value = "AOP简单日志记录",description = "看看能不能记录上",params = {"id","name"})
 	@RequestMapping("/getip")
 	@ResponseBody
 	public String getip(HttpServletRequest request) {
-		String ipString=IPUtils.getIpAddr(request);
+		HttpServletRequest request1 = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();//获取请求上下文
+		String ipString=IPUtils.getIpAddr(request1);
 		System.out.println(ipString);
 		return ipString;
 	}
