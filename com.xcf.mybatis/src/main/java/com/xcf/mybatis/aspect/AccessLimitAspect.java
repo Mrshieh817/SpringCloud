@@ -70,8 +70,8 @@ public class AccessLimitAspect {
 	         //获取方法签名(通过此签名获取目标方法信息)
 	         MethodSignature ms=(MethodSignature)JoinPoint.getSignature();
 	         //获取目标方法上的注解指定的操作名称
-	         Method targetMethod=targetCls.getDeclaredMethod(ms.getName(),ms.getParameterTypes());
-	         AccessLimit requiredLog=targetMethod.getAnnotation(AccessLimit.class);
+	         //Method targetMethod=targetCls.getDeclaredMethod(ms.getName(),ms.getParameterTypes());
+	         AccessLimit requiredLog=ms.getMethod().getAnnotation(AccessLimit.class);
 	         String operation=requiredLog.disEl();
 			
 			//2.直接获取

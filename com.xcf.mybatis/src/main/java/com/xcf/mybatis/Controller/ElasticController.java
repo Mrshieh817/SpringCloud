@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -29,6 +30,8 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
+import org.redisson.api.RBucket;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -74,6 +77,12 @@ public class ElasticController {
 	
 	@Autowired
 	private ElasticjianguanjiaService elasticjianguanjiaservice;
+	
+	/**
+	 * ResissionClient
+	 */
+	@Autowired
+	private RedissonClient redissonClient;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@ApiOperation("测试es的读取")
@@ -262,8 +271,16 @@ public class ElasticController {
 	@RequestMapping("/testarry")
 	@AccessLimit(limit = 5,sec = 5,disEl = "#root[p].keyword")
 	public String testarry(@RequestBody Param p) {
+		// 测试Redisson的桶实例  开始
+		RBucket<String> testrbucket=redissonClient.getBucket("onlykey");
+		String kString= testrbucket.get();
+		if (ObjectUtils.isEmpty(kString)) {
+			testrbucket.set("是我给redis桶里面写的值", 60, TimeUnit.SECONDS);
+		}else {
+			System.out.println("redis桶里面的值:"+kString);
+		}
+		// 结束
 		List<String> list=new ArrayList<>();
-		
 		 String er="a,b,c,d";
 		Arrays.stream(er.split(",")).forEach((action)->{
 			list.add(action);
