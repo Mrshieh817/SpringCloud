@@ -18,6 +18,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -51,6 +53,7 @@ import com.xcf.mybatis.Core.Elasticjianguanjia;
 import com.xcf.mybatis.Core.Param;
 import com.xcf.mybatis.Service.ElasticService;
 import com.xcf.mybatis.Service.ElasticjianguanjiaService;
+import com.xcf.mybatis.Tool.LeakyBucket.LeakyBucketTool;
 import com.xcf.mybatis.Tool.redis.RedisUtil;
 import com.xcf.mybatis.aspect.AccessLimit;
 import com.xcf.mybatis.aspect.WebLog;
@@ -83,6 +86,9 @@ public class ElasticController {
 	 */
 	@Autowired
 	private RedissonClient redissonClient;
+	
+	
+	private static LeakyBucketTool tool=new LeakyBucketTool(1d, 100d);
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@ApiOperation("测试es的读取")
@@ -268,6 +274,12 @@ public class ElasticController {
 		return "success";
 	}
 	
+	
+	/**
+	 * 测试令牌桶
+	 * @param p
+	 * @return
+	 */
 	@RequestMapping("/testarry")
 	@AccessLimit(limit = 5,sec = 5,disEl = "#root[p].keyword")
 	public String testarry(@RequestBody Param p) {
@@ -286,6 +298,25 @@ public class ElasticController {
 			list.add(action);
 		});
 		return list.toString();
+	}
+	
+	/**
+	 * 测试漏桶算法
+	 * @return
+	 */
+	@RequestMapping("/testleaky")
+	public String testleaky() {
+		ExecutorService ex=Executors.newCachedThreadPool();
+		for (int i = 0; i < 200; i++) {
+			ex.execute(()->{
+				System.out.println(tool.trybucket());
+			});
+		}
+		
+		System.out.println("第一个:"+Math.max(0, 1));
+		System.out.println("第二个:"+Math.max(0, -1));
+		ex.shutdownNow();
+		return "ok testleaky!";
 	}
 
 }
