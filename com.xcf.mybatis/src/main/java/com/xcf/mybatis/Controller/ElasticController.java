@@ -51,8 +51,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.xcf.mybatis.Core.ElasticUser;
 import com.xcf.mybatis.Core.Elasticjianguanjia;
 import com.xcf.mybatis.Core.Param;
+import com.xcf.mybatis.Core.Resultmodel;
 import com.xcf.mybatis.Service.ElasticService;
 import com.xcf.mybatis.Service.ElasticjianguanjiaService;
+import com.xcf.mybatis.Tool.HttpsUtils;
 import com.xcf.mybatis.Tool.LeakyBucket.LeakyBucketTool;
 import com.xcf.mybatis.Tool.redis.RedisUtil;
 import com.xcf.mybatis.aspect.AccessLimit;
@@ -317,6 +319,13 @@ public class ElasticController {
 		System.out.println("第二个:"+Math.max(0, -1));
 		ex.shutdownNow();
 		return "ok testleaky!";
+	}
+	
+	
+	@RequestMapping("/loginwechat")
+	public String loginwechat() {
+		Resultmodel re=	HttpsUtils.Get("https://open.weixin.qq.com/connect/qrconnect?appid=wx94da362330b13c85&redirect_uri=https://developers.weixin.qq.com/&response_type=code&scope=snsapi_login");
+		return re.getMessage();
 	}
 
 }
