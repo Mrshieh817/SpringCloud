@@ -46,7 +46,7 @@ public class SwaggerConfiguration {
  
     @Bean(value = "defaultApi2")
     public Docket defaultApi2() {
-        Docket docket = new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo())
+        Docket docket = new Docket(DocumentationType.SWAGGER_2).groupName("own").apiInfo(apiInfo())
                 .select()
                 // 这里指定Controller扫描包路径
                 .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
@@ -65,7 +65,7 @@ public class SwaggerConfiguration {
     }
  
     private ApiInfo apiInfo() {
-        Contact contact = new Contact("pengsn", "", "");
+        Contact contact = new Contact("xiechengfei", "", "");
         return new ApiInfoBuilder().title(projectName).
         description(description).contact(contact).version("2.0").build();
     }

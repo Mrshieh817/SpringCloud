@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSort;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.xcf.mybatisplus.model.KernelHotConfig;
 import com.xcf.mybatisplus.model.Vo.KResponse;
 import com.xcf.mybatisplus.model.dto.KernelHotConfigDto;
@@ -38,6 +40,7 @@ public class KernelHotConfigController {
 	 * @return
 	 */
 	@PostMapping("/getKernelHotConfigList")
+	@ApiOperationSupport(author="谢承飞",order = 2)
 	@ApiOperation("获取配置表的所有信息")
 	public KResponse<List<KernelHotConfigDto>>  getKernelHotConfigList(){
 		return KResponse.data(configService.getKernelHotConfigList());
@@ -50,6 +53,7 @@ public class KernelHotConfigController {
 	 */
 	@PostMapping("/save")
 	@ApiOperation("存储配置表信息")
+	@ApiOperationSupport(author="谢承飞",order = 1)
 	public KResponse<Boolean> save(@RequestBody @Validated KernelHotConfigParam body){
 		KernelHotConfig modelConfig=new KernelHotConfig();
 		modelConfig.setConfigKey(body.getConfigKey());
