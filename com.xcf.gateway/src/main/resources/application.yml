@@ -1,0 +1,50 @@
+        
+server:
+  port: 8085
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.10.65:8848
+      config:
+        server-addr: 192.168.10.65:8848
+        file-extension: yaml
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials, RETAIN_UNIQUE
+        - DedupeResponseHeader=Access-Control-Allow-Origin, RETAIN_UNIQUE
+        - DedupeResponseHeader=Vary, RETAIN_UNIQUE
+        - RemoveResponseHeader=intranet
+        - RemoveRequestHeader=intranet
+      discovery:
+        locator:
+          enabled: false #让gateway可以发现nacos中的微服务 开启后会自动去掉一层路径,且routes会失效
+          lower-case-service-id: true       #如果完全注释routes,knife4j会失效
+      routes: # 路由数组  指当请求满足什么样的条件的时候，转发到哪个微服务上
+#        - id: netsadcloud-shop #当前路由标识，要求唯一 （默认值uuid，一般不用，需要自定义）
+#          uri: lb://netsadcloud-shop #请求最终要被转发的地址   lb指的是从nacos中按照名称获取微服务,并遵循负载均衡策略
+#          predicates: #断言 判断条件，返回值是boolean 转发请求要返回的条件 （可以写多个）
+#            - Path=/netsadcloud-shop/** #当请求路径满足path指定的规则时，此路由信息才会正常转发
+#          filters: #过滤器（在请求传递过程中，对请求做一些手脚）
+#            - StripPrefix=1 # 在请求转发之前去掉一层路径
+        - id: providers
+          uri: lb://providers
+          predicates:
+            - Path=/providers/**
+          filters:
+            - StripPrefix=1
+        - id: ff
+          uri: lb://providers
+          predicates:
+            - Path=/ff/**
+          filters:
+            - StripPrefix=1
+
+  application:
+    name: netsadcloud-gateway
+  main:
+    allow-bean-definition-overriding: true
+project:
+ name: xiechegnfei
+ description: api description
+ 
