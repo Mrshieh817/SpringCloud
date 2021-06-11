@@ -23,6 +23,7 @@ import org.springframework.expression.common.TemplateParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,6 +34,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.xcf.mybatis.UserType;
 import com.xcf.mybatis.Core.SysUser;
 import com.xcf.mybatis.Core.Delay.DelayJob;
 import com.xcf.mybatis.Service.Delay.DelayJobService;
@@ -230,6 +232,20 @@ public class UserController {
 		String ipString=IPUtils.getIpAddr(request1);
 		System.out.println(ipString);
 		return ipString;
+	}
+	
+	/**
+	 * 测试枚举
+	 * @param code
+	 * @return
+	 */
+	@RequestMapping("/testenum/{code}")
+	@ResponseBody
+	public String testenum(@PathVariable(value ="code",required = true)String code) {
+	 String result=UserType.getString(code);
+	 System.out.println(result);
+	 System.out.println(UserType.restatus.getStartTime());
+	 return result;
 	}
 	
 
