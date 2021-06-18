@@ -1,6 +1,7 @@
 package com.xcf.mybatis.Controller;
 
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,6 +48,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 
 /**
 * @author 作者:大飞
@@ -56,6 +58,7 @@ import io.swagger.annotations.ApiParam;
 @Api(tags = "用户操作接口")
 @Controller
 @RequestMapping("/user")
+@Slf4j
 public class UserController {
 	
 	@Autowired
@@ -245,6 +248,8 @@ public class UserController {
 	 String result=UserType.getString(code);
 	 System.out.println(result);
 	 System.out.println(UserType.restatus.getStartTime());
+	 String fgString=MessageFormat.format("message:{0}========>{1}", result,new Date());
+	 log.info("记录结果:{}=======>{}========={}", result,new Date(),fgString);
 	 return result;
 	}
 	
