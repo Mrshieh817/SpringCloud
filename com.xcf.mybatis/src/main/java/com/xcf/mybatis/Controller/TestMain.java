@@ -25,7 +25,7 @@ public class TestMain {
 		//System.out.println(new Timestamp(twelve));//今天23点59分59秒
 		//ThreadPoolExecutor executor=new ThreadPoolExecutor(5,10,10L,TimeUnit.SECONDS,new LinkedBlockingDeque<>(1000), new ThreadPoolExecutor.AbortPolicy());
 		ExecutorService executor = Executors.newSingleThreadExecutor();
-		CountDownLatch latch=new CountDownLatch(1);
+		CountDownLatch latch=new CountDownLatch(2);
 		executor.execute(()->{
 			System.out.println("传进来的是：A");
 			latch.countDown();
@@ -42,6 +42,7 @@ public class TestMain {
 		}
 	    //System.out.println(executor.getActiveCount());	
 	    //executor.isShutdown();
+		System.out.println("结束");
 	}
 	
 	public static void sendinfo(String in) {
