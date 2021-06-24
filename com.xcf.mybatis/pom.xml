@@ -131,6 +131,14 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/eu.bitwalker/UserAgentUtils 代理user-agent-->
+        <dependency>
+            <groupId>eu.bitwalker</groupId>
+            <artifactId>UserAgentUtils</artifactId>
+            <version>1.21</version>
+        </dependency>
+
 	</dependencies>
 	<build>
 		<!--之前是用来解决@@问题 -->

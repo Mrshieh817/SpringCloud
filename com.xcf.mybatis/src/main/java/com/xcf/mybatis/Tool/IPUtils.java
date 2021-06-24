@@ -9,6 +9,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.bitwalker.useragentutils.OperatingSystem;
+import eu.bitwalker.useragentutils.UserAgent;
+
 /** 
 * @author xcf 
 * @Date 创建时间：2021年5月27日 上午10:11:22 
@@ -75,5 +78,29 @@ public class IPUtils {
         return ip;
     }
 
+    public static String getDeviceType(String agent) {
+        // ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+         //String agentString = ServletUtil.getRequest().getHeader("User-Agent");
+         UserAgent userAgent = UserAgent.parseUserAgentString(agent);
+         OperatingSystem operatingSystem = userAgent.getOperatingSystem(); // 操作系统信息
+         eu.bitwalker.useragentutils.DeviceType deviceType = operatingSystem.getDeviceType(); // 设备类型
 
+         switch (deviceType) {
+             case COMPUTER:
+                 return "PC";
+             case TABLET: {
+                 if (agent.contains("Android")) return "Android Pad";
+                 if (agent.contains("iOS")) return "iPad";
+                 return "Unknown";
+             }
+             case MOBILE: {
+                 if (agent.contains("Android")) return "Android";
+                 if (agent.contains("iOS")) return "IOS";
+                 return "Unknown";
+             }
+             default:
+                 return "Unknown";
+         }
+
+     }
 }

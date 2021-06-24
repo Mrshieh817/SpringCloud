@@ -78,7 +78,7 @@ public class SimpleControllerLogAspect {
         
         //ProceedingJoinPoint join=(ProceedingJoinPoint)point;
         //拦截游客
-        this.extracted(returnObj, RegularReplaceEnum.VIP);
+        this.extracted(returnObj, RegularReplaceEnum.ALL);
     }
 
     private void requestBodyLog(MethodInvocationProceedingJoinPoint point) {

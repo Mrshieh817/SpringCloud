@@ -232,6 +232,9 @@ public class UserController {
 	@ResponseBody
 	public String getip(HttpServletRequest request) {
 		HttpServletRequest request1 = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();//获取请求上下文
+		//获取代理
+		System.err.println(IPUtils.getDeviceType(request1.getHeader("User-Agent")));
+		//获取ip信息
 		String ipString=IPUtils.getIpAddr(request1);
 		System.out.println(ipString);
 		return ipString;
