@@ -68,7 +68,6 @@ public class TestMain {
 	
 	public static void trydo(Integer num) {
 		try {
-			//synchronized
 			lock.lock();
 				//obgObject.wait(1000);
 				//Thread.sleep(1000);
